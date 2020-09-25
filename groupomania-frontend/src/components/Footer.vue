@@ -1,6 +1,6 @@
 <template>
     <div id="footer">
-        <p>{{ copyright }}</p>
+        <p>{{ copyright }} - By Gladston Aristoverne</p>
     </div>
 </template>
 
@@ -23,12 +23,15 @@ export default {
 </script>   
 
 <style lang="scss">
-    .footer{
-        position: fixed;
-        left: 0;
-        bottom: 0;
-    }
-    p{
-        color:grey;
+       #footer {
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            color: gray;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
     }
 </style>
