@@ -1,20 +1,50 @@
-const express = require('express')
-const bodyParser = require('body-parser')
-const route = require('./routes/apiRoute')
+const http = require('http')
+const app = require('./app')
 
 
+const normalizePort = val => {
+    const port = parseInt(val, 10);
+  
+    if (isNaN(port)) {
+      return val;
+    }
+    if (port >= 0) {
+      return port;
+    }
+    return false;
+  };
+  const port = normalizePort(process.env.PORT || '8081');
+  app.set('port', port);
+  
+  const errorHandler = error => {
+    if (error.syscall !== 'listen') {
+      throw error;
+    }
+    const address = server.address();
+    const bind = typeof address === 'string' ? 'pipe ' + address : 'port: ' + port;
+    switch (error.code) {
+      case 'EACCES':
+        console.error(bind + ' requires elevated privileges.');
+        process.exit(1);
+        break;
+      case 'EADDRINUSE':
+        console.error(bind + ' is already in use.');
+        process.exit(1);
+        break;
+      default:
+        throw error;
+    }
+  };
 
-const app = express()
 
-app.get('/', (req, res) => {
-    res.json({ message: 'Test'})
+const server = http.createServer(app)
+
+server.on('error', errorHandler)
+server.on('listening', () => {
+    const address = server.address()
+    const bind = typeof address === 'string' ? 'pipe' + address: 'port ' + port
+    
+    console.log('Listening on ' +  bind)
 })
 
-
-app.use(bodyParser.urlencoded({ extended: true}))
-app.use(bodyParser.json())
-
-const PORT = process.env.port || 8080.
-app.listen(PORT, () => {
-    console.log('app run at port:' + PORT)
-})
+server.listen(port)
