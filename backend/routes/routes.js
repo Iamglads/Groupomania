@@ -1,5 +1,9 @@
 const express = require('express')
-const router = express.Router()
+const router = express.Router() 
+
+// middlewares
+const verifyEmailExist = require('../middlewares/verifyEmail')
+const auth = require('../middlewares/auth')
 
 // controller users
 const userController = require('../controller/userController')
@@ -13,7 +17,7 @@ const commentsController = require('../controller/commentController')
 
 // routes users
 router.post('/user/login', userController.login)
-router.post('/user/signup', userController.signup)
+router.post('/user/signup', verifyEmailExist.verifyEmail, userController.signup)
 router.get('/user', userController.getAllUsers)
 router.get('/user/:id', userController.getUserId)
 router.put('/user/:id', userController.updateUser)
@@ -28,7 +32,7 @@ router.delete('/posts/:id', postsController.deletePost)
 
 
 // routes comments
- router.post('/comment', commentsController.createComment)
+router.post('/comment', commentsController.createComment)
 router.get('/comments', commentsController.getAllComments)
 router.get('/comment/:id', commentsController.getCommentId)
 router.put('/comment/:id', commentsController.updateComment)
