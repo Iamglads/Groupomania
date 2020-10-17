@@ -1,9 +1,9 @@
 <template>
-    <nav id="sidebar">
+    <nav v-bind:class="{active: active} " id="sidebar">
 		<div class="sidebar-content">
 			<div class="sidebar-content-chevron">
 				<!-- toggle button -->
-				<button class="btn-chevron-right">
+				<button @click="toggleSidebar()" class="btn-chevron-right">
 					<i class="fas fa-chevron-left"></i> 
 					<i class="fas fa-chevron-right"></i>
 				</button>
@@ -55,10 +55,22 @@
 <script>
 export default {
 	name: "Profil",
+	data() {
+		return {
+			active: true
+		}
+	},
 	computed: {
 		currentUser() {
 			return this.$store.state.auth.user
 		}
+	},
+
+	mounted() {
+		this.$parent.$on('toggleSidebar', () => {
+			console.log('received')
+			this.active = !this.active
+		})
 	},
 
 	methods: {
@@ -67,9 +79,10 @@ export default {
 			this.$router.push('/')
 		},
 
-		toglleForm() {
-			
+		toggleSidebar() {
+			this.$parent.$emit('toggleSidebar')
 		}
+
 	}
 
 };
@@ -90,9 +103,6 @@ export default {
 			margin-right: 10px;
 		}
 
-		@media (max-width: 900px) { 
-			//margin-left: -250px;
-		}
 	}
 
 	.sidebar-content {
@@ -150,5 +160,17 @@ export default {
 			}
 		}
 	}
-	
+
+	.nav-item{
+		&:hover{
+			margin-left: 10px;
+			transition: 0.5s;
+		}
+	}
+
+	.active {
+		margin-left: -250px;
+		transition: 1s;
+		
+	}
 </style>

@@ -24,9 +24,7 @@ export default {
 
 <style lang="scss">
        #footer {
-            position: fixed;
-            left: 0;
-            bottom: 0;
+            margin-top: 50px;
             width: 100%;
             color: gray;
             text-align: center;

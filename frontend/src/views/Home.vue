@@ -1,8 +1,8 @@
 <template>
     <div class="home">
         <Sidebar />
-        <div class="home-content row">
-            <div class="home-content-block col-md-6 mt-5 mx-auto">
+        <div class="home-content row col-md-6 ">
+            <div class="home-content-block ">
                 <h1> Publication </h1>
                 <div class="divider"></div>
                 <!-- post form -->
@@ -27,7 +27,7 @@
                         />
                     </div>
                     <div class="form-group">
-                        <label for="exampleFormControlFile1"></label>
+                        <label for="exampleFormControlFile1">Ajouter une image</label>
                         <input 
                         @change="previewFiles"
                         type="file" 
@@ -37,26 +37,28 @@
                         />
                     </div>
                     <!-- submit button fom -->
-                    <button @click="createPost()" type="submit" class="btn-post col-md-12">Publier</button>
+                    <button @click="createPost()" type="submit" class="btn-post col-sm-3">Publier</button>
                     <!-- display erros -->
                     <p v-if="message" class="alert alert-danger"> {{ message }}</p>
                 </form>
                 <!-- form add post -->
                  <hr class="my-4">
                 <!-- all posts -->
-                <section v-for="currentPost in currentPosts" :key="currentPost.id" class="home-content-info">
+                <section  class="home-content-info">
                     <!-- boucle dans le tableau afin de recupérer tous les posts -->
-                    <article  class="home-content-posts">
+                    <article v-for="currentPost in currentPosts" :key="currentPost.id"  class="home-content-posts">
                         <p> 
                             <i class="fas fa-user"></i> 
-                            {{ currentPost.user.firstname}}
-                            <strong> {{ currentPost.user.lastname}} </strong> 
+                             {{currentPost.User.firstname}}
+                            <strong>  {{currentPost.User.lastname}} </strong> 
                         </p>
+                        <p>{{ moment(currentPost.createdAt).fromNow() }}</p>
+                         <hr class="my-1">
+                        <h3>  {{ currentPost.title}} </h3>
                         <div class="home-content-posts-img">
                             <img  src="../assets/glad.jpg" alt="photo">
                         </div>
                         <div class="home-content-text">
-                            <h3>  {{ currentPost.title}} </h3>
                             <p>  {{ currentPost.content}}  </p>
                         </div>
                         <hr class="my-4">
@@ -75,7 +77,7 @@
                                 <i class="fas fa-user-edit"></i>
                             </div>
                             <!-- Delete post-->
-                             <div class="cursor-pointer">
+                             <div @click="deletePost()" class="cursor-pointer">
                                 <i class="far fa-trash-alt"></i>
                             </div>
                         </div>
@@ -91,23 +93,41 @@
 // imports 
 import Sidebar from '../components/Sidebar'
 import axios from 'axios'
+const moment = require('moment')
+
 
 export default {
     name: "Home",
     components: { Sidebar},
     data() {
         return {
+            moment: moment,
             userData : JSON.parse(localStorage.getItem("user")),
             currentPosts: [],
             message: "",
             submitted: false,
             post: {
-                id: '',
                 title: '',
                 content: '',
                 attachment: '',
             }
         }
+    },
+    // get and display all posts
+    beforeCreate() {
+            let userData = JSON.parse(localStorage.getItem("user"))
+            axios.get('http://localhost:3000/api/post', {
+                 headers: {
+                    Authorization: `Bearer ${userData.token}`,
+                    "Content-type": "application/json"
+              },
+            })
+            .then((response) => {
+            this.currentPosts = response.data;
+            console.log(response.data);
+            })
+            .catch((err) => {console.log(err);});
+        
     },
 
     methods: {
@@ -130,6 +150,8 @@ export default {
                 this.submitted = true
             })
             .catch(err => { console.log(err)})   
+            window.location.reload();  
+            
         },
         newPost() {
             this.submitted = false
@@ -140,22 +162,26 @@ export default {
             this.files = this.$refs.myFiles.files
         },
 
-        // get and display all posts
 
-         beforeCreate() {
-            axios.get('http://localhost:3000/api/post', {
-                 headers: {
-                    Authorization: `Bearer ${this.userData.token}`,
-                    "Content-type": "application/json"
-              },
+        deletePost() {
+            let userData = JSON.parse(localStorage.getItem('user'))
+            let token = userData.token
+            let user = userData
+            console.log(user)
+
+            axios.delete(`http://localhost:3000/api/post/${user.userId}`, {
+                headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-type": "application/json"
+            },
             })
-            .then((response) => {
-            this.currentPosts = response.data;
-            console.log(response.data);
+            .then(() => {
+                console.log('Vous avez supprimé votre compte!')
             })
-            .catch((err) => {console.log(err);});
-        
-    }
+            .catch(error  => { return error });
+            window.location.reload();     
+            
+        }       
 }
 }
 </script>
@@ -173,30 +199,27 @@ export default {
         width: 80%;
         display: flex;
         justify-content: center;
-        margin-top: 110px;
+        margin-top: 120px;
     }
 
     .home-content-info{
-        display: flex;
-        max-width: 600px;
         .home-content-posts{
             height: auto;
             background: #ffffff;
             border-radius: 20px;
             padding: 1em;
+            margin-bottom: 10px;
             .home-content-posts-img{
+                height: auto;
+                background:  rgb(167, 184, 208);
+                img{
+                    max-width: 100%;
                     height: auto;
-                    background:  rgb(167, 184, 208);
-                    img{
-                        max-width: 100%;
-                        height: auto;
-                    }
-            }
-            .home-content-text{
-                h3{
-                    text-align: left;
                 }
             }
+             h3{
+                    text-align: left;
+                }
             p{
                 text-align: left;
             }
@@ -214,8 +237,8 @@ export default {
 
        .btn-post{
             padding: .3em;
-            border: 2px solid rgb(207, 82, 92);
-            color: rgb(10, 32, 66);
+            border: 2px solid #cf525c;
+            color: #0a2042;
             background: none;
             margin-top: 30px;
             border-radius: 5px;

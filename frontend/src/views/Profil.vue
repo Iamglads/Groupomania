@@ -1,7 +1,7 @@
 <template>
     <div class="profil">
         <Sidebar />
-        <div class="profil-content">
+        <div class="profil-content col-md-6 ">
             <section class="profil-content-info">
                 <h1>Profil</h1>
                 <div class="divider"></div>
@@ -19,7 +19,7 @@
                     <span> Modifier </span>
                 </div>
                 <!-- delete profil -->
-                <div class="cursor-pointer">
+                <div @click="deleteAccount()" class="cursor-pointer">
                     <i class="far fa-trash-alt"></i>
                     <span> Suprimer</span>
                 </div>
@@ -106,7 +106,7 @@
                     <!--Grid row-->
                 </div>
 
-                <button class="btn-update-profil col-md-12">Modifier</button>
+                <button class="btn-update-profil col-sm-3">Modifier</button>
                 </form>
             </section>
         </div>
@@ -114,14 +114,21 @@
 </template>
 
 <script>
+
+// imports 
 import Sidebar from "../components/Sidebar";
-//import axios from "axios"
+import axios from "axios"
+import Swal from "sweetalert2"
+
+
 export default {
   name: "Profil",
   components: { Sidebar },
   data() {
       return {
-          editForm: false
+          user: JSON.parse(localStorage.getItem('user')),
+          editForm: false,
+          message: ''
       }
   },
   computed: {
@@ -133,8 +140,53 @@ export default {
   methods: {
         displayForm() {
         return (this.editForm = true)
-    }
+        },
+
+        updateInfoAccount() {
+            
+        },
+
+        deleteAccount() {
+            let userData = JSON.parse(localStorage.getItem('user'))
+            let token = userData.token
+            let user = userData
+            console.log(user)
+
+            Swal.fire({
+                title: "Voulez vous supprimer votre compte?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Supprimé!",
+                cancelButtonText: "Annulé",
+                confirmButtonColor: "#0a2042",
+                cancelButtonColor: "#cf525c",
+            })
+            .then(result => {
+                if(result.isConfirmed) {
+                    axios.delete(`http://localhost:3000/api/user/${user.userId}`, {
+                        headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-type": "application/json"
+                    },
+                    })
+                    .then(() => {
+                        console.log('Vous avez supprimé votre compte!')
+                    })
+                    .catch(error  => { return error });
+                    localStorage.removeItem("user");
+                    this.user = "";
+                    this.$router.push("/");
+                    window.location.reload();
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    Swal.fire('Annulé')
+                }
+
+            })
+            
+        }
+
   },
+
   mounted() {
       if(!this.currentUser) {
           this.$router.push('/login')
@@ -149,19 +201,23 @@ export default {
         display: flex;
         justify-content: center;
         margin-top: 120px;
-        h1 {
+        padding: 1em;
+        .name {
             text-align: left;
-        }
-    @media (max-width: 900px) { 
-        width: 90%;
+            @media (max-width: 500px) { 
+        width: 100%;
+        font-size: 1em;
      }
-     @media (max-width: 560px) { 
-        margin-top: 150px;
+
+        }
+    @media (max-width: 500px) { 
+        width: 100%;
      }
 }
 .profil-content {
-    width: 50%;
+    justify-content: center;
     .profil-content-info {
+        margin: auto;
         .profil-picture {
         background: #ffffff;
         padding: 0.5em;
@@ -172,6 +228,7 @@ export default {
         .fonction {
             text-align: left;
         }
+        
         }
         .profil-actions{
             display: flex;
@@ -184,10 +241,11 @@ export default {
                 }
             }
         }
-    }
-    @media (max-width: 900px) { 
+         @media (max-width: 500px) { 
         width: 90%;
      }
+    }
+   
     }
 
     .btn-update-profil {

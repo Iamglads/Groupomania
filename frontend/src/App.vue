@@ -1,6 +1,6 @@
 <template>
     <div id="app">
-		<nav class="navbar fixed-top">
+		<nav class="nav fixed-top">
 			<img to="/" alt="groupomania logo" src="././assets/logo.png">
 			<div>
 				<ul class="nav mr-auto">
@@ -19,7 +19,6 @@
 </template>
 
 <script>
-
 import Footer from './components/Footer';
 
 export default {
@@ -38,6 +37,7 @@ export default {
 	}
 }
 </script>
+
 
 <style lang="scss">
 
