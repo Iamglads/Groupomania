@@ -28,6 +28,10 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING
       },
+      picture: {
+        allowNull: false,
+        type: Sequelize.STRING
+      },
       isAdmin: {
         allowNull: false,
         type: Sequelize.BOOLEAN,
