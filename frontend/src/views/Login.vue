@@ -38,13 +38,16 @@
                 v-if="errors.has('password')"
                 class="alert alert-danger"
                 >Mot de passe invalid</p>
-                <router-link to="/signup">Vous n'avez de compte? Créer un compte! </router-link>
             </div>
             <!--password end  -->
              <div  class="md-form mb-0">
                  <button type="submit" class="btn-login col-md-12" :disabled="loading">
                      <span>Connexion</span>
                 </button>
+                <p>
+                    <router-link to="/signup">Vous n'avez pas de compte? Créez votre compte! </router-link>
+                </p>
+                <!-- alert message error -->
                 <span v-show="loading" class="spinner-border spinner-border-sm"></span>
                 <p v-if="message" class="alert alert-danger" role="alert">{{ message }}</p>
             </div>
@@ -104,6 +107,9 @@ export default {
 </script>
 
 <style lang="scss">
+    #login{
+        min-height: 100%;
+    }
     .login-form{
         .btn-login{
             padding: .3em;
