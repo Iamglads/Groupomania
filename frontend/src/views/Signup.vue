@@ -84,7 +84,8 @@
                         <!--Grid row-->
                     </div>
 
-                    <button class="btn-signup col-md-12">S'incrire</button>
+                    <button class="btn-signup col-md-12">S'incrire</button> 
+                    <p> <router-link to="/">Connectez-vous! </router-link></p>
                 </form>
                 <!-- alert message error -->
                     <div
