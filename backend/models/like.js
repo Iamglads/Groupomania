@@ -14,27 +14,6 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
 
-     /*  models.User.belongsToMany(models.Post, {
-        through: models.Like,
-        foreignKey: 'userId',
-        otherKey: 'postId',
-      });
-  
-      models.Post.belongsToMany(models.User, {
-        through: models.Like,
-        foreignKey: 'postId',
-        otherKey: 'userId',
-      });
-  
-      models.Like.belongsTo(models.User, {
-        foreignKey: 'userId',
-        as: 'user',
-      });
-  
-      models.Like.belongsTo(models.Message, {
-        foreignKey: 'postId',
-        as: 'post',
-      }); */
     }
   };
   Like.init({

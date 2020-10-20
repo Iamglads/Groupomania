@@ -1,7 +1,11 @@
 <template>
     <div id="app">
-		<nav class="nav fixed-top">
-			<img to="/" alt="groupomania logo" src="././assets/logo.png">
+		<nav class="navbar fixed-top ">
+			<!-- logo groupomania -->
+			<router-link to="/" class="nav-link"> 
+				<img class="logo" alt="groupomania logo" src="././assets/logo.png">
+			</router-link>	
+			<!-- logo groupomania end-->
 			<div>
 				<ul class="nav mr-auto">
 					<li v-if="!currentUser"  class="nav-item"> 
@@ -48,7 +52,6 @@ export default {
       text-align: center;
       color: #2c3e50;
   }
-
    .navbar {
         background: rgb(10, 32, 66);
         display: flex;
@@ -60,13 +63,9 @@ export default {
         right: 0;
         width: 100%;
         z-index: 1;
-			.navbar-nav{
-				display: flex;
-				flex-direction: row;
-			}
 
-		img{
-			height: 80px;
+		.logo{
+			height: 60px;
 			margin-left: 10px;
 			cursor: pointer;
 		}

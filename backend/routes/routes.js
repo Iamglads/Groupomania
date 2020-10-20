@@ -3,6 +3,7 @@ const router = express.Router()
 
 // middlewares
 const verifyEmailExist = require('../middlewares/verifyEmail')
+const signup = require('../middlewares/userRegister')
 const auth = require('../middlewares/auth')
 const multer = require('../middlewares/multer')
 
@@ -14,12 +15,12 @@ const userController = require('../controller/userController')
 const postsController = require('../controller/postsController')
 
 // controller comments
-//const commentsController = require('../controller/commentController')
+const commentsController = require('../controller/commentController')
 
 
 // routes users
 router.post('/user/login', userController.login)
-router.post('/user/signup', verifyEmailExist.verifyEmail, userController.signup)
+router.post('/user/signup', signup.validate, verifyEmailExist.verifyEmail, userController.signup)
 // router.get('/user', userController.getAllUsers) // only admin
 router.get('/user/:id', auth, userController.getUserId)
 router.put('/user/:id', auth, userController.updateUser)
@@ -33,15 +34,11 @@ router.put('/post/:id', auth, postsController.updatePost)
 router.delete('/post/:id', auth, postsController.deletePost) 
 
 
-// routes comments
-/* router.post('/comment', commentsController.createComment)
-router.get('/comments', commentsController.getAllComments)
-router.get('/comment/:id', commentsController.getCommentId)
-router.put('/comment/:id', commentsController.updateComment)
-router.delete('/comment/:id', commentsController.deleteComment)   */
+router.post('/comment', commentsController.createCommentPost)
+router.get('/comment', commentsController.getCommentPost)
+router.delete('/comment/:id', commentsController.deleteCommentPost)  
 
 // likes
-
-
+router.post('/post/:postId/like', )
 
 module.exports = router

@@ -1,7 +1,7 @@
 <template>
     <nav v-bind:class="{active: active} " id="sidebar">
-		<div class="sidebar-content">
-			<div class="sidebar-content-chevron">
+		<div class="sidebar__content">
+			<div class="sidebar__content--chevron">
 				<!-- toggle button -->
 				<button @click="toggleSidebar()" class="btn-chevron-right">
 					<i class="fas fa-chevron-left"></i> 
@@ -10,7 +10,7 @@
 				<!-- toggle button end -->
 			</div>
 			
-			<div class="sidebar-header">
+			<div class="sidebar__content--header">
 				<div class="user-pic">
 					<i class="fas fa-user-circle"></i>
 				</div>
@@ -19,7 +19,7 @@
 				</div>
 			</div>
 			<!-- nav links -->
-			<div class="sidebar-menu">
+			<div class="sidebar__content--menu">
 				<ul class="nav">
 					<li class="nav-item">
 						<i class="fas fa-user-lock"></i>
@@ -76,7 +76,9 @@ export default {
 	methods: {
 		logout() {
 			this.$store.dispatch('auth/logout')
+			localStorage.removeItem('user')
 			this.$router.push('/')
+			window.location.reload()
 		},
 
 		toggleSidebar() {
@@ -105,22 +107,55 @@ export default {
 
 	}
 
-	.sidebar-content {
+	.sidebar__content {
 		display: block;
-		margin-top: 100px;
-		.sidebar-header {
+		margin-top: 110px;
+
+	&--chevron{
+		display: flex;
+		justify-content: flex-end;
+		margin-right: -40px;
+		.btn-chevron-right{
+			width: 40px;
+			height: 40px;
+			display: flex;
+			align-items: center;
+			justify-content: flex-end;
+			background: rgb(207, 82, 92);
+			border: none;
+			border-top-right-radius: 20px;
+			border-bottom-right-radius: 20px;
+			top: 0px;
+			right: 0px;
+			.fa-chevron-right{
+				color: white;
+				font-size: 30px;
+			}
+			.fa-chevron-left{
+				color: rgb(207, 82, 92);
+			}
+		}
+	}
+
+	&--header {
 		.fa-user-circle {
 			font-size: 100px;
 			color: rgb(10, 32, 66);
 		}
 	}
 
-	.sidebar-menu {
+	&--menu {
 		margin-top: 30px;
 		display: flex;
 		justify-content: center;
 			.nav{
 				display: block;
+				.nav-item{
+					&:hover{
+						margin-left: 10px;
+						transition: 0.5s;
+					}
+				}
 			}
 			li {
 				font-size: 20px;
@@ -135,42 +170,9 @@ export default {
 			}
 		}
 	}
-	.sidebar-content-chevron{
-		display: flex;
-		justify-content: flex-end;
-		margin-right: -40px;
-		.btn-chevron-right{
-		width: 40px;
-		height: 40px;
-		display: flex;
-		align-items: center;
-		justify-content: flex-end;
-		background: rgb(207, 82, 92);
-		border: none;
-		border-top-right-radius: 20px;
-		border-bottom-right-radius: 20px;
-		top: 0px;
-		right: 0px;
-			.fa-chevron-right{
-				color: white;
-				font-size: 30px;
-			}
-			.fa-chevron-left{
-				color: rgb(207, 82, 92);
-			}
-		}
-	}
-
-	.nav-item{
-		&:hover{
-			margin-left: 10px;
-			transition: 0.5s;
-		}
-	}
 
 	.active {
 		margin-left: -250px;
 		transition: 1s;
-		
 	}
 </style>

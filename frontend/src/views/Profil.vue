@@ -18,7 +18,7 @@
                         <i class="fas fa-user-edit"></i>
                         <span> Modifier </span>
                     </div>
-                    <div @click="deleteAccount()" class="cursor-pointer">
+                    <div @click="deleteAccount(currentUser.id)" class="cursor-pointer">
                         <i class="far fa-trash-alt"></i>
                         <span> Suprimer</span>
                     </div>
@@ -224,7 +224,7 @@ export default {
             })
             .then(result => {
                 if(result.isConfirmed) {
-                    axios.delete(`http://localhost:3000/api/user/${user.userId}`, {
+                    axios.delete(`http://localhost:3000/api/user/${user.id}`, {
                         headers: {
                         Authorization: `Bearer ${token}`,
                         "Content-type": "application/json"
@@ -237,7 +237,6 @@ export default {
                     localStorage.removeItem("user");
                     this.user = "";
                     this.$router.push("/");
-                    window.location.reload();
                 } else if (result.dismiss === Swal.DismissReason.cancel) {
                     Swal.fire('Annulé')
                 }
@@ -250,7 +249,7 @@ export default {
 
   mounted() {
       if(!this.currentUser) {
-          this.$router.push('/login')
+          this.$router.push('/')
       }
   }
 

@@ -1,33 +1,33 @@
 const models = require('../models')
 const fs = require('fs')
-const auth = require('../middlewares/auth')
+const jwt = require('jsonwebtoken')
+
+require('dotenv').config()
+
 
 // create posts and get ressources with multer
 exports.createPost = (req, res, next) => {
+    const token = req.headers.authorization.split(' ')[1];
+    const decodedToken = jwt.verify(token, process.env.JWT_TOKEN )
+    const userId = decodedToken.userId;
+
 
     if (!req.body.title) {
         return res.status(400).json({message: 'Veuillez mettre le titre de la publication!'})
     }
 
-    models.User.findOne() 
-    .then((userFound) => {
-        if(!userFound) {
-            return res.status(400).json({ message: "Nous ne pouvons pas identifier l'utilisateur"})
-        } else {
-            models.Post.create({
-                title: req.body.title,
-                content: req.body.content,
-                //attachment: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
-                UserId: userFound.id,
-                likes: 0,
-                include:[{ model: models.User, attributes: [ 'firstname', 'lastname']}]
-            })
-            .then(() => res.status(201).json({message:  "Publication enregistrée!"}))
-            .catch(error => res.status(400).json(error))
-
-        }
+    
+    models.Post.create({
+        title: req.body.title,
+        content: req.body.content,
+        attachment: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
+        UserId: userId,
+        likes: 0,
+        include:[{ model: models.User, attributes: [ 'firstname', 'lastname']}]
     })
-    .catch(error => res.status(500).json(error))
+    .then((post) => res.status(201).json(post))
+    .catch(error => res.status(400).json(error))
+
 
 }
 
@@ -49,7 +49,7 @@ exports.getAllPosts = (req, res, next) => {
 // get one post with id 
 exports.getPostId = (req, res, next) => {
 
-    models.Post.findById({ id: req.params.id}, {include: ['firstname', 'lastname']})
+    models.Post.findOne({ id: req.params.id}, {include: ['firstname', 'lastname']})
     .then((post) => res.status(200).send(post))
     .catch((error) => res.status(500).send(error))
 

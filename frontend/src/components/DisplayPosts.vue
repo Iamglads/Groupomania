@@ -3,21 +3,24 @@
     <section  class="display__posts">
         <!-- boucle dans le tableau afin de recupérer tous les posts -->
         <article v-for="currentPost in currentPosts" :key="currentPost.id"  class="display__posts--bloc">
-            <p> 
-                <i class="fas fa-user-clock"></i>
-                    {{currentPost.User.firstname}}
-                <strong>  {{currentPost.User.lastname}} </strong> - 
-                <span> Posté {{ moment(currentPost.createdAt).fromNow() }}</span>
-            </p>
-                <hr class="my-1">
-            <h3>  {{ currentPost.title}} </h3>
-            <!-- image publication -->
-            <div v-if="currentPost.attachment" class="post-img">
-                <img  v-bind:src=" currentPost.attachment " alt="photo">
-            </div>
-            <!-- text publication -->
-            <div class="post-content">
-                <p>  {{ currentPost.content}}  </p>
+             <!--  publication -->
+            <div>
+                 <p> 
+                    <i class="fas fa-user-clock"></i>
+                        {{currentPost.User.firstname}}
+                    <strong>  {{currentPost.User.lastname}} </strong> - 
+                    <span> Posté {{ moment(currentPost.createdAt).fromNow() }}</span>
+                </p>
+                    <hr class="my-1">
+                <h3>  {{ currentPost.title}} </h3>
+                <!-- image publication -->
+                <div v-if="currentPost.attachment" class="post-img">
+                    <img  v-bind:src=" currentPost.attachment " alt="image">
+                </div>
+                <!-- text publication -->
+                <div class="post-content">
+                    <p>  {{ currentPost.content}}  </p>
+                </div>
             </div>
                 
             <!-- commentaire publication -->
@@ -32,17 +35,20 @@
                 </span>
             </div> 
             <!-- display comments -->               
-            <div v-for="comment in currentComments" :key="comment.id" class="display-comment">
-                <div v-if="currentPost.id == comment.PostId">
-                    <span>{{ comment.User.firstname }}<strong>{{comment.User.lastname}}</strong> </span>
-                    <p>{{comment.comment}}</p>
-                </div> 
-                <div
-                v-if="currentUser.id == comment.UserId"
-                @click.prevent="deleteComment(comment.id)" 
-                class="cursor-pointer"
-                >
-                    <i  class="far fa-trash-alt"></i>
+            <div v-for="comment in currentComments" :key="comment.id">
+                <div v-if="currentPost.id == comment.PostId" class="display-comment">
+                    <div>
+                        <span><strong>{{ comment.User.firstname }}{{comment.User.lastname}}</strong> </span>
+                        <span> a commenté {{ moment(currentPost.createdAt).fromNow() }}</span>
+                        <p>{{comment.comment}}</p>
+                    </div>               
+                    <div
+                    v-if="currentUser.id == comment.UserId"
+                    @click.prevent="deleteComment(comment.id)" 
+                    class="cursor-pointer"
+                    >
+                        <i  class="far fa-trash-alt"></i>
+                    </div>
                 </div>
             </div>
             <hr class="my-1">
@@ -92,9 +98,9 @@ export default {
     },
 
     computed: {
-      currentUser() {
-        return this.$store.state.auth.user
-    }
+        currentUser() {
+            return this.$store.state.auth.user
+        }
     },
     // get and display all posts
     beforeCreate() {
@@ -167,7 +173,7 @@ export default {
             })
             .catch(error  => { return error });
             
-        }
+        },
 
     }
 }

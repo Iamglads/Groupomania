@@ -25,7 +25,13 @@ app.use(helmet())
 //app.use(cors())
 app.use('/images', express.static(path.join(__dirname, 'images')))
 
-// all  routes users posts comments likes 
+/*
+	all  routes 
+	users 
+	posts 
+	comments 
+	likes 
+*/ 
 const routes = require('./routes/routes')
 
 

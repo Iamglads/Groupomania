@@ -31,7 +31,7 @@
                         accept="images/*"
                         type="file" 
                         class="form-control-file" 
-                        ref="myFiles"
+                        ref="file"
                         id="file" 
                         />
                     </div>
@@ -75,6 +75,11 @@ export default {
     },
     
     methods: {
+        // select file
+        selecFile(){
+            this.post.attachment = this.$refs.file.files[0];  
+        },
+        // create post
         createPost() {
             let postContent = {
                 title: this.post.title,
@@ -98,17 +103,7 @@ export default {
             })
             .catch(err => { console.log(err)})   
             
-        },
-
-        selecFile(e){
-                const image = e.target.files[0];
-                const reader = new FileReader();
-                reader.readAsDataURL(image);
-                reader.onload = e =>{
-                    this.post.attachment = e.target.result;
-                };
-            
-        }
+        }   
 
     }
 }

@@ -54,14 +54,15 @@ exports.login = (req, res, next) => {
                         return res.status(401).send({ message: "Mot de passe incorrect!" })
                     } else {
                         res.status(200).send({
-                            userId: user.id,
+                            id: user.id,
                             firstname: user.firstname,
                             lastname: user.lastname,
                             fonction: user.fonction,
+                            email: user.email,
                             token: jwt.sign({ userId: user.id}, process.env.JWT_TOKEN, { expiresIn: '2h'})
                         })
                     }
-                    log("Vous êtes connecté!")
+                    log("Vous êtes connecté!" + user.id)
                 })
                 .catch((error) => res.status(400).send(log(error)));
             }
@@ -82,7 +83,7 @@ exports.getUserId = (req, res, next) => {
     models.User.findOne({ id: req.params.id})
     .then((user) => { 
          res.status(200).send({
-            userId: user.id,
+            id: user.id,
             firstname: user.firstname,
             lastname: user.lastname,
             fonction: user.fonction,
