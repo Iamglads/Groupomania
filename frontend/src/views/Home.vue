@@ -6,9 +6,8 @@
                 <h1> Publication </h1>
                 <div class="divider"></div>
                 <!-- post form -->
-                <form class="home__post--form">
-                    <div class="form-group">
-                        <label></label>
+                <form class="home-form" enctype="multipart/form-data">
+                    <div>
                         <input 
                         v-model="post.title"
                         type="text" 
@@ -17,8 +16,7 @@
                         placeholder="Titre de la publication" 
                         />
                     </div>
-                    <div class="form-group">
-                        <label></label>
+                    <div>
                         <input 
                         v-model="post.content"
                         type="textarea" 
@@ -26,52 +24,80 @@
                         placeholder="Ecrire votre publication" 
                         />
                     </div>
-                    <div class="form-group">
-                        <label for="exampleFormControlFile1"></label>
+                    <div>
+                        <label></label>
                         <input 
                         @change="selectFile()"
                         accept="images/*"
                         type="file" 
                         class="form-control-file" 
-                        ref="file"
+                        ref="myFiles"
                         id="file" 
                         />
                     </div>
-                    <!-- submit button fom -->
-                    <button @click="createPost()" type="submit" class="btn-post col-sm-3">Publier</button>
-                    <!-- display erros -->
-                    <p v-if="message" class="alert alert-danger"> {{ message }}</p>
+                    <div>
+                        <!-- submit button fom -->
+                        <button @click="createPost()" type="submit" class="btn-post col-sm-3">Publier</button>
+                        <!-- display erros -->
+                        <p v-if="message" class="alert alert-danger"> {{ message }}</p>
+                    </div>
                 </form>
                 <!-- form add post -->
-                 <hr class="my-4">
+                 <hr class="my-2">
                 <!-- all posts -->
                 <section  class="home-post">
                     <!-- boucle dans le tableau afin de recupérer tous les posts -->
                     <article v-for="currentPost in currentPosts" :key="currentPost.id"  class="post-bloc">
                         <p> 
-                            <i class="fas fa-user"></i> 
+                            <i class="fas fa-user-clock"></i>
                              {{currentPost.User.firstname}}
-                            <strong>  {{currentPost.User.lastname}} </strong> 
+                            <strong>  {{currentPost.User.lastname}} </strong> - 
+                            <span> Posté {{ moment(currentPost.createdAt).fromNow() }}</span>
                         </p>
-                        <p>{{ moment(currentPost.createdAt).fromNow() }}</p>
                          <hr class="my-1">
                         <h3>  {{ currentPost.title}} </h3>
                         <!-- image publication -->
-                        <div class="post-img">
-                            <img  src="../assets/glad.jpg" alt="photo">
+                        <div v-if="currentPost.attachment" class="post-img">
+                            <img  v-bind:src=" currentPost.attachment " alt="photo">
                         </div>
                         <!-- text publication -->
                         <div class="post-content">
                             <p>  {{ currentPost.content}}  </p>
                         </div>
-                          <!-- likes and comments -->
-                          <hr class="my-1">
-                        <div class="post-actions">
-                            <div>
+                         
+                        <!-- commentaire publication -->
+                        <div class="post-comment">
+                             <input 
+                            type="text" 
+                            class="input-comment" 
+                            placeholder="Commenter" 
+                            />
+                            <span class="validate-comment cursor-pointer">
+                                <i class="fas fa-check"></i>
+                            </span>
+                        </div> 
+                        <!-- display comments -->               
+                        <div v-for="comment in currentComments" :key="comment.id" class="display-comment">
+                            <div v-if="currentPost.id == comment.PostId">
+                                <span>{{ comment.User.firstname }}<strong>{{comment.User.lastname}}</strong> </span>
+                                <p>{{comment.comment}}</p>
+                            </div> 
+                            <div
+                            v-if="currentUser.id == comment.UserId"
+                            @click.prevent="deleteComment(comment.id)" 
+                            class="cursor-pointer"
+                            >
+                                <i  class="far fa-trash-alt"></i>
+                            </div>
+                        </div>
+                        <hr class="my-1">
+                         <!-- likes and comments -->
+                         <div class="post-actions">
+                            <div class="cursor-pointer">
                                 <i class="fas fa-thumbs-up"></i>
                                 <span> 0 </span>
                             </div> 
-                            <div>
+                            <div class="cursor-pointer">
                                 <i class="fas fa-comment-dots"></i> 
                                 <span> 0 </span>
                             </div> 
@@ -82,21 +108,7 @@
                               class="cursor-pointer">
                                 <i  class="far fa-trash-alt"></i>
                             </div>
-                        </div>
-                        <hr class="my-1">
-                        <!-- commentaire publication -->
-                        <div class="post-commment">
-                             <input 
-                            type="text" 
-                            class="form-control" 
-                            placeholder="Commentaire" 
-                            />
-                        </div> 
-                        <!-- display comments -->
-                        <div class="post-commment">
-                          <p>Les commentaires seront affichés ici</p>
-                        </div> 
-                        
+                        </div>               
                     </article>
                 </section>
                 <!-- all posts end-->
@@ -121,6 +133,7 @@ export default {
             moment: moment,
             userData : JSON.parse(localStorage.getItem("user")),
             currentPosts: [],
+            currentComments: [],
             message: "",
             submitted: false,
             post: {
@@ -139,6 +152,7 @@ export default {
     // get and display all posts
     beforeCreate() {
             let userData = JSON.parse(localStorage.getItem("user"))
+            // posts
             axios.get('http://localhost:3000/api/post', {
                  headers: {
                     Authorization: `Bearer ${userData.token}`,
@@ -146,10 +160,26 @@ export default {
               },
             })
             .then((response) => {
-            this.currentPosts = response.data;
-            //console.log(response.data);
+                if(!response) return []
+                else {
+                    this.currentPosts = response.data
+                    //console.log(response.data);
+                }
             })
-            .catch((err) => {console.log(err);});
+            .catch((err) => console.log(err));
+
+            // comments
+            axios.get('http://localhost:3000/api/comment', {
+                headers: {
+                    Authorization: `Bearer ${userData.token}`,
+                    "Content-type": "application/json"
+                }
+            })
+            .then((response) => {
+                this.currentComments = response.data
+                //console.log(response.data);
+            })
+            .catch((err) => console.log(err))
         
     },
 
@@ -158,8 +188,10 @@ export default {
             let data = {
                 title: this.post.title,
                 content: this.post.content,
-                attachment: this.selectFile(),
+                attachment: this.post.attachment,
             }
+
+            if(this.post.title =="") this.message = "Ajoutez un titre à votre publication!"
 
             axios.post('http://localhost:3000/api/post', data, {
                 headers: {
@@ -171,14 +203,20 @@ export default {
                 this.post.id = response.data.id
                 console.log(response.data)
                 this.submitted = true
+                window.location.reload();  
             })
             .catch(err => { console.log(err)})   
-            window.location.reload();  
             
         },
 
-        selectFile() {
-            this.post.attachment = this.$refs.file.files
+        selecFile(e){
+                const image = e.target.files[0];
+                const reader = new FileReader();
+                reader.readAsDataURL(image);
+                reader.onload = e =>{
+                    this.post.attachment = e.target.result;
+                };
+            
         },
 
 
@@ -214,13 +252,18 @@ export default {
             display: flex;
             justify-content: center;
             margin-top: 120px;
-            .home__post--form{
-                  .btn-post{
+            .home-form{
+                .form-control{
+                    border-radius: 25px;
+                    margin-top: 10px;
+                    font-size: 14px;
+                }
+                .btn-post{
                     padding: .3em;
-                    border: 2px solid #cf525c;
+                    border: 1px solid #cf525c;
                     color: #0a2042;
                     background: none;
-                    margin-top: 30px;
+                    margin-top: 10px;
                     border-radius: 5px;
                     &:hover{
                         background:rgb(207, 82, 92);
@@ -255,6 +298,42 @@ export default {
                     }
                     p{
                         text-align: left;
+                    }
+
+                    .post-comment{
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        .input-comment{
+                            width: 85%;
+                            border-top-left-radius: 20px;
+                            border-bottom-left-radius: 20px;
+                            border: none;
+                            padding: .4em;
+                            background: #eeeeee;
+                        }
+                        .validate-comment{
+                            color:#ffffff;
+                            font-size: 1.5em;
+                            width: 15%;
+                            background: #0a2042;
+                            border-top-right-radius: 20px;
+                            border-bottom-right-radius: 20px;
+                            &:hover{
+                                background: rgb(207, 82, 92);
+                            }
+                        }
+                    }
+                    .display-comment{
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        margin-top: 10px;
+                        border-radius: 10px;
+                        padding: 0.5em;
+                        text-align: left;
+                        background: #eeeeee;
+                        color: #0a2042;
                     }
                 }
 
