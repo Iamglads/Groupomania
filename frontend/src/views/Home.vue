@@ -6,7 +6,7 @@
                 <h1> Publication </h1>
                 <div class="divider"></div>
                 <!-- post form -->
-                <form class="home-form" enctype="multipart/form-data">
+                <form class="home-form" enctype="formdata">
                     <div>
                         <input 
                         v-model="post.title"
@@ -17,7 +17,7 @@
                         />
                     </div>
                     <div>
-                        <input 
+                        <textarea 
                         v-model="post.content"
                         type="textarea" 
                         class="form-control" 
@@ -74,9 +74,20 @@ export default {
         }
     },
     
+    computed: {
+        loggedIn() {
+        return this.$store.state.status.loggedIn
+        }
+    },
+    beforeCreated() {
+        if(!this.loggedIn) {
+            this.$router.push('/')
+        }
+    },
+    
     methods: {
         // select file
-        selecFile(){
+        selectFile(){
             this.post.attachment = this.$refs.file.files[0];  
         },
         // create post
@@ -84,8 +95,10 @@ export default {
             let postContent = {
                 title: this.post.title,
                 content: this.post.content,
-                attachment: this.post.attachment,
+                //attachment: this.post.attachment,
             }
+
+            console.log(postContent)
 
             if(this.post.title =="") this.message = "Ajoutez un titre à votre publication!"
 

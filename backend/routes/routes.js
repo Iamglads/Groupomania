@@ -20,7 +20,7 @@ const commentsController = require('../controller/commentController')
 
 // routes users
 router.post('/user/login', userController.login)
-router.post('/user/signup', signup.validate, verifyEmailExist.verifyEmail, userController.signup)
+router.post('/user/signup',  verifyEmailExist.verifyEmail, userController.signup)
 // router.get('/user', userController.getAllUsers) // only admin
 router.get('/user/:id', auth, userController.getUserId)
 router.put('/user/:id', auth, userController.updateUser)

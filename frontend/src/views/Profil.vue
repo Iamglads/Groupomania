@@ -5,11 +5,24 @@
             <section class="profil__content--info">
                 <h1>Profil</h1>
                 <div class="divider"></div>
-                <article class="profil-picture">
-                    <img class="img-profil" src="../assets/glad.jpg" alt="logo_groupomania" />
+                <article class="profil-picture">            
+                     <div class="col-md-6">
+                          <img class="img-profil" src="../assets/glad.jpg" alt="logo_groupomania" />
+                            <div class="md-form nmb-0">
+                                <label for="exampleFormControlFile1"></label>
+                                <input 
+                                @change="selectFile()"
+                                accept="images/*"
+                                type="file" 
+                                class="form-control-file" 
+                                ref="file"
+                                id="file" 
+                                />
+                            </div>
+                        </div>
                     <div>
-                        <h1 class="name">{{currentUser.firstname}} <strong>{{currentUser.lastname}}</strong></h1>
-                        <p class="fonction">{{currentUser.fonction}}</p>
+                        <h1 class="name">{{currentUser.firstname}} <strong>{{currentUser.lastname}}</strong> <br />
+                        <span class="fonction">{{currentUser.fonction}}</span></h1>
                     </div>
                 </article>
                  <!-- update and delete profil informations -->
@@ -40,7 +53,6 @@
                             type="text"
                             class="form-control"
                             placeholder="Prénom"
-                            required
                             />
                         </div>
                         </div>
@@ -53,7 +65,6 @@
                             name="lastname"
                             class="form-control"
                             placeholder="Nom"
-                            required
                             />
                         </div>
                         </div>
@@ -71,24 +82,21 @@
                             name="email"
                             class="form-control"
                             placeholder="E-mail"
-                            required
                             />
                         </div>
-                        <div v-if="submitted && errors.has('email')" class="alert-danger">
-                            {{ errors.first("email") }}
+                            <div v-if="submitted && errors.has('email')" class="alert-danger">
+                                {{ errors.first("email") }}
+                            </div>
                         </div>
-                        </div>
-                        <div class="col-md-6">
+                         <div class="col-md-6">
                             <div class="md-form mb-0">
                                 <label for="password" class=""></label>
                                 <input
                                 v-model="updateUser.password"
                                 type="password"
-                                id="password"
                                 name="password"
                                 class="form-control"
-                                placeholder="Mot de passe"
-                                required
+                                placeholder="password"
                                 />
                             </div>
                         </div>
@@ -101,26 +109,12 @@
                                 name="fonction"
                                 class="form-control"
                                 placeholder="Fonction"
-                                required
-                                />
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="md-form nmb-0">
-                                <label for="exampleFormControlFile1"></label>
-                                <input 
-                                @change="selectFile()"
-                                accept="images/*"
-                                type="file" 
-                                class="form-control-file" 
-                                ref="file"
-                                id="file" 
                                 />
                             </div>
                         </div>
                         <!--Grid row-->
                     </div>
-                    <button @click="updateInfoAccount()" class="btn-update-profil col-sm-3">Enregistrer</button>
+                    <button @click="updateInfoAccount(currentUser.id)" class="btn-update-profil col-sm-3">Enregistrer</button>
                 </form>
             </section>
         </div>
@@ -140,7 +134,6 @@ export default {
   components: { Sidebar },
   data() {
       return {
-          user: JSON.parse(localStorage.getItem('user')).data,
           editForm: false,
           message: '',
           submitted: false,
@@ -149,14 +142,25 @@ export default {
               lastname: '',
               email: '',
               password: '',
-              fonction: ''
+              fonction: '',
+              picture: ''
           }
       }
   },
   computed: {
       currentUser() {
         return this.$store.state.auth.user
+    },
+
+    loggedIn() {
+        return this.$store.state.auth.loggedIn
     }
+  },
+
+  beforeCreated() {
+      if(!this.loggedIn) {
+          this.$router.push('/')
+      }
   },
 
   methods: {
@@ -164,26 +168,26 @@ export default {
         return (this.editForm = true)
         },
         // update user account
-        updateInfoAccount() {
+        updateInfoAccount(currentUserId) {
             this.submitted = true
-            let userData = JSON.parse(localStorage.getItem('user'))
-            let token = userData.token
-            let user = userData
 
             if(this.updateUser.firstname == '') {
-                this.updateUser.firstname = userData.data.firstname
+                this.updateUser.firstname = this.currentUser.firstname
             }
             if(this.updateUser.lastname == '') {
-                this.updateUser.lastname = userData.data.lastname
+                this.updateUser.lastname = this.currentUser.lastname
             }
             if(this.updateUser.email == '') {
-                this.updateUser.email = userData.data.email
+                this.updateUser.email = this.currentUser.email
+            }
+            if(this.updateUser.password == '') {
+                this.updateUser.paswword = this.currentUser.password
             }
             if(this.updateUser.fonction == '') {
-                this.updateUser.fonction = userData.data.fonction
+                this.updateUser.fonction = this.currentUser.fonction
             }
 
-            axios.put(`http://localhost:3000/api/user/${user.userId}`, {
+            axios.put(`http://localhost:3000/api/user/${currentUserId}`, {
                 firstname: this.updateUser.firstname,
                 lastname: this.updateUser.lastname,
                 email: this.updateUser.email,
@@ -193,13 +197,13 @@ export default {
             {
             headers: {
               "Content-type": "application/json",
-              Authorization: `Bearer ${token}`,
+              Authorization: `Bearer ${this.currentUser.token}`,
             }
           })
           .then((data) => {
               localStorage.removeItem('user')
               localStorage.setItem('user', JSON.stringify(data.data))
-              window.location.reload()
+              //window.location.reload()
               this.message === "Vous avez modifié vos informations!"
           })
           .catch(err => {
@@ -208,10 +212,6 @@ export default {
         },
         // delete user acccount
         deleteAccount() {
-            let userData = JSON.parse(localStorage.getItem('user'))
-            let token = userData.token
-            let user = userData
-            console.log(user)
 
             Swal.fire({
                 title: "Voulez vous supprimer votre compte?",
@@ -224,9 +224,9 @@ export default {
             })
             .then(result => {
                 if(result.isConfirmed) {
-                    axios.delete(`http://localhost:3000/api/user/${user.id}`, {
+                    axios.delete(`http://localhost:3000/api/user/${this.currentUser.id}`, {
                         headers: {
-                        Authorization: `Bearer ${token}`,
+                        Authorization: `Bearer ${this.currentUser.token}`,
                         "Content-type": "application/json"
                     },
                     })
@@ -278,6 +278,7 @@ export default {
                     background: #ffffff;
                     padding: 0.5em;
                     display: flex;
+                    justify-content: center;
                     align-items: center;
                     border-radius: 20px;
                     margin-top: 10px;
@@ -286,7 +287,21 @@ export default {
                         border-radius: 100%;
                     }
                     .fonction {
-                        text-align: left;
+                        font-size: 15px;
+                    }
+                    h1{
+                        @media (max-width: 600px) { 
+                        text-align: center;
+                        }
+                    }
+                    p{
+                        @media (max-width: 600px) { 
+                        text-align: center;
+                        }
+                    }
+
+                    @media (max-width: 600px) { 
+                        display: block;
                     }
                 }
                 .profil-actions{

@@ -16,13 +16,21 @@ app.use((req, res, next) => {
 
 //const cors = require('cors')
 const helmet = require('helmet')
+const rateLimit = require("express-rate-limit")
 
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100 // limit each IP to 100 requests per windowMs
+});
+ 
+//  apply to all requests
+app.use(limiter);
+app.use(helmet())
 
 app.use(bodyParser.urlencoded({ extended: true}))
 app.use(bodyParser.json())
 
-app.use(helmet())
-//app.use(cors())
+
 app.use('/images', express.static(path.join(__dirname, 'images')))
 
 /*

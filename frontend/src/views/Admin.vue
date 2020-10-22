@@ -5,6 +5,7 @@
             <div class="col-md-6 mt-5 mx-auto">
                 <h1>Administrateur</h1>
                 <div class="divider"></div>
+                
             </div>
         </div>
     </div>

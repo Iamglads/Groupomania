@@ -6,11 +6,14 @@ exports.createCommentPost = (req, res, next) => {
     const decodedToken = jwt.verify(token, process.env.JWT_TOKEN )
     const userId = decodedToken.userId;
 
+
+    console.log(req.body.id)
    
     models.Comment.create({
+        
         comment: req.body.comment,
         UserId: userId,
-        PostId: 67,
+        PostId: req.body.postId,
     })
     .then((comment) => res.status(200).json(comment))
     .catch(error => res.status(400).json(error))
@@ -26,7 +29,7 @@ exports.getCommentPost = (req, res, next) => {
         include:[{ model: models.User, attributes: [ 'firstname', 'lastname']}]
     })
     .then(comments => res.status(200).json(comments))
-    .catch(error => res.status(500).send(error))
+    .catch(error => res.status(500).json(log(error)))
 }
 
 exports.deleteCommentPost = (req, res, next) => {
@@ -35,24 +38,3 @@ exports.deleteCommentPost = (req, res, next) => {
         .catch((error) => res.status(500).send(error))
 }
 
-
-/* exports.createCommentPost = (req, res, next) => {
-    const token = req.headers.authorization.split(' ')[1];
-    const decodedToken = jwt.verify(token, process.env.JWT_TOKEN )
-    const userId = decodedToken.userId;
-
-    models.Post.findOne({postId: req.params.id})
-    .then((postId) => {
-        if(postId.id){
-            console.log(postId)
-        } else {
-            models.Comment.create({ where: {postId: req.body.postId}},{
-                comment: req.body.comment,
-                userId: userId,
-                postId: postId.id,
-            })
-            .then((comment) => res.status(200).json(comment))
-            .catch(error => res.status(400).json(error))
-        }
-    })
-} */

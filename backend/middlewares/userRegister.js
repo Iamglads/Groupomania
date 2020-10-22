@@ -1,6 +1,6 @@
 exports.validate = (req, res, next) => {
     
-    const EMAIL_REGEX = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
+  /*   const EMAIL_REGEX = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
     const PASSWORD_REGEX = /^(?=.*\d).{4,8}$/
 
 
@@ -10,7 +10,7 @@ exports.validate = (req, res, next) => {
     if (!EMAIL_REGEX.test(req.body.email)) {
         return res.status(400).json({ 'error': 'email est invalide!'})
     }
-    if (!PASSWORD_REGEX.test(req.body.password)) {
+  /*   if (!PASSWORD_REGEX.test(req.body.password)) {
         return res.status(400).json({ 'error': 'Le mot de passe est invalide'})
-    }
+    } */ 
 } 

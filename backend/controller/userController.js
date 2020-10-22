@@ -59,7 +59,8 @@ exports.login = (req, res, next) => {
                             lastname: user.lastname,
                             fonction: user.fonction,
                             email: user.email,
-                            token: jwt.sign({ userId: user.id}, process.env.JWT_TOKEN, { expiresIn: '2h'})
+                            isAdmin: user.isAdmin,
+                            token: jwt.sign({ userId: user.id}, process.env.JWT_TOKEN, { expiresIn: '5h'})
                         })
                     }
                     log("Vous êtes connecté!" + user.id)
@@ -93,16 +94,24 @@ exports.getUserId = (req, res, next) => {
     
 }
 
-//upadate a user by id 
 exports.updateUser = (req, res, next) => {
     const firstname = req.body.firstname
 
-    models.User.update(req.body, {
-        where: { id: req.params.id}
+    bcrypt.hash(req.body.password, 10)
+    .then(hash => {
+            models.User.update({ 
+            email: req.body.email,
+            lastname: req.body.lastname,
+            firstname: req.body.firstname,
+            password: hash,
+            fonction: req.body.fonction,
+            isAdmin: 0
+        })
+        .then(() => res.status(201).send({ message: `La modification de l'utilisateur: ${firstname} est éffectuée avec succès!`}))
+        .catch(error => res.status(400).send(log(error)))
     })
-    .then(() => res.status(201).send({ message: `La modification de l'utilisateur: ${firstname} est éffectuée avec succès!`}))
-    .catch(error => res.status(400).send(log(error)))
-}
+    .catch(error => res.status(500).json(error))
+} 
 
 // delete a user by id
 exports.deleteUser = (req, res, next) => {

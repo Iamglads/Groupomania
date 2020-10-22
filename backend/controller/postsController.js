@@ -1,6 +1,7 @@
 const models = require('../models')
 const fs = require('fs')
 const jwt = require('jsonwebtoken')
+const Post = require('../models/post')
 
 require('dotenv').config()
 
@@ -11,16 +12,14 @@ exports.createPost = (req, res, next) => {
     const decodedToken = jwt.verify(token, process.env.JWT_TOKEN )
     const userId = decodedToken.userId;
 
-
     if (!req.body.title) {
         return res.status(400).json({message: 'Veuillez mettre le titre de la publication!'})
     }
 
-    
-    models.Post.create({
+    models.Post.create({ 
         title: req.body.title,
         content: req.body.content,
-        attachment: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
+        //attachment: JSON.parse(`${req.protocol}://${req.get('host')}/images/${req.file.filename}`),
         UserId: userId,
         likes: 0,
         include:[{ model: models.User, attributes: [ 'firstname', 'lastname']}]

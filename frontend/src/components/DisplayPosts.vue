@@ -25,12 +25,13 @@
                 
             <!-- commentaire publication -->
             <div class="post-comment">
-                    <input 
+                <input 
+                v-model="comment"
                 type="text" 
                 class="input-comment" 
                 placeholder="Commenter" 
                 />
-                <span class="validate-comment cursor-pointer">
+                <span @click.prevent="createComment(currentPost.id)" class="validate-comment cursor-pointer">
                     <i class="fas fa-check"></i>
                 </span>
             </div> 
@@ -43,7 +44,7 @@
                         <p>{{comment.comment}}</p>
                     </div>               
                     <div
-                    v-if="currentUser.id == comment.UserId"
+                    v-if="currentUser.id == comment.UserId || currentUser.isAdmin"
                     @click.prevent="deleteComment(comment.id)" 
                     class="cursor-pointer"
                     >
@@ -54,17 +55,17 @@
             <hr class="my-1">
                 <!-- likes and comments -->
                 <div class="post-actions">
-                <div class="cursor-pointer">
+               <!--  <div @click.prevent="likePost()" class="cursor-pointer">
                     <i class="fas fa-thumbs-up"></i>
                     <span> 0 </span>
-                </div> 
-                <div class="cursor-pointer">
+                </div>  -->
+               <!--  <div class="cursor-pointer">
                     <i class="fas fa-comment-dots"></i> 
-                    <span> 0 </span>
-                </div> 
+                    <span > {{commentQuantity(currentPost.id).length}}</span>
+                </div>  -->
                 <!-- Delete post-->
                     <div
-                    v-if="currentUser.id == currentPost.UserId"
+                    v-if="currentUser.id == currentPost.UserId || currentUser.isAdmin"
                     @click.prevent="deletePost(currentPost.id)" 
                     class="cursor-pointer"
                 >
@@ -94,6 +95,8 @@ export default {
             currentComments: [],
             message: "",
             submitted: false,
+            comment: '',
+            postId: '',
         }
     },
 
@@ -105,6 +108,7 @@ export default {
     // get and display all posts
     beforeCreate() {
             let userData = JSON.parse(localStorage.getItem("user"))
+            let token = userData.token
             // posts
             axios.get('http://localhost:3000/api/post', {
                  headers: {
@@ -124,19 +128,44 @@ export default {
             // comments
             axios.get('http://localhost:3000/api/comment', {
                 headers: {
-                    Authorization: `Bearer ${userData.token}`,
+                    Authorization: `Bearer ${token}`,
                     "Content-type": "application/json"
                 }
             })
             .then((response) => {
                 this.currentComments = response.data
-                //console.log(response.data);
             })
             .catch((err) => console.log(err))
         
     },
 
     methods: {
+        // create comment
+         createComment(postId) {
+            let userData = JSON.parse(localStorage.getItem("user"))
+            let token = userData.token
+            let postComment = {
+                comment: this.comment,
+                postId: postId
+            }
+
+            if(this.comment =="") this.message = "Vous commentaire est vide!"
+
+            axios.post('http://localhost:3000/api/comment', postComment, {
+                headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-type": "application/json"
+              },
+            })
+            .then((response) => {
+                console.log(response.data)
+                this.submitted = true
+                window.location.reload();  
+            })
+            .catch(err => { console.log(err)})   
+            
+        },
+
         // delete post
         deletePost(currentPostId) {
             let userData = JSON.parse(localStorage.getItem('user'))
@@ -172,8 +201,12 @@ export default {
                 window.location.reload();
             })
             .catch(error  => { return error });
-            
+
         },
+        commentQuantity(id) {
+            const quantity = this.currentComments.filter((comment) => comment.postId == id)
+            return quantity
+        }
 
     }
 }
