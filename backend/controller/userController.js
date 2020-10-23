@@ -115,8 +115,9 @@ exports.updateUser = (req, res, next) => {
 
 // delete a user by id
 exports.deleteUser = (req, res, next) => {
-    models.User.destroy({
-        where: { id: req.params.id}
+    console.log(req.params.id)
+    models.User.destroy( 
+        {where: { id: req.params.id}
     })
     .then(() => res.status(200).send({ message: 'La suppression est effectuée!'}))
     .catch((error) => res.status(500).send(error))

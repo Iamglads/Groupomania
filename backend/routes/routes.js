@@ -23,8 +23,8 @@ router.post('/user/login', userController.login)
 router.post('/user/signup',  verifyEmailExist.verifyEmail, userController.signup)
 // router.get('/user', userController.getAllUsers) // only admin
 router.get('/user/:id', auth, userController.getUserId)
-router.put('/user/:id', auth, userController.updateUser)
-router.delete('/user/:id', auth, userController.deleteUser)
+router.put('/user/unique/:id', auth, userController.updateUser)
+router.delete('/user/unique/:id', auth, userController.deleteUser)
 
 // routes posts
 router.post('/post', auth, multer, postsController.createPost)

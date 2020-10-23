@@ -7,18 +7,8 @@
                 <div class="divider"></div>
                 <article class="profil-picture">            
                      <div class="col-md-6">
-                          <img class="img-profil" src="../assets/glad.jpg" alt="logo_groupomania" />
-                            <div class="md-form nmb-0">
-                                <label for="exampleFormControlFile1"></label>
-                                <input 
-                                @change="selectFile()"
-                                accept="images/*"
-                                type="file" 
-                                class="form-control-file" 
-                                ref="file"
-                                id="file" 
-                                />
-                            </div>
+                         <i class="fas fa-user-circle"></i>
+                           
                         </div>
                     <div>
                         <h1 class="name">{{currentUser.firstname}} <strong>{{currentUser.lastname}}</strong> <br />
@@ -187,7 +177,7 @@ export default {
                 this.updateUser.fonction = this.currentUser.fonction
             }
 
-            axios.put(`http://localhost:3000/api/user/${currentUserId}`, {
+            axios.put(`http://localhost:3000/api/user/unique/${currentUserId}`, {
                 firstname: this.updateUser.firstname,
                 lastname: this.updateUser.lastname,
                 email: this.updateUser.email,
@@ -224,7 +214,7 @@ export default {
             })
             .then(result => {
                 if(result.isConfirmed) {
-                    axios.delete(`http://localhost:3000/api/user/${this.currentUser.id}`, {
+                    axios.delete(`http://localhost:3000/api/user/unique/${this.currentUser.id}`, {
                         headers: {
                         Authorization: `Bearer ${this.currentUser.token}`,
                         "Content-type": "application/json"
@@ -234,6 +224,7 @@ export default {
                         console.log('Vous avez supprimé votre compte!')
                     })
                     .catch(error  => { return error });
+
                     localStorage.removeItem("user");
                     this.user = "";
                     this.$router.push("/");
@@ -288,6 +279,9 @@ export default {
                     }
                     .fonction {
                         font-size: 15px;
+                    }
+                    .fa-user-circle{
+                        font-size: 150px;
                     }
                     h1{
                         @media (max-width: 600px) { 

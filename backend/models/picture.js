@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
       models.Picture.belongsTo(models.User, {
         foreignKey: {
           allowNull: false,
-          onDelete: 'RESTRICT',
+          onDelete: 'cascade',
         }
       })
     }

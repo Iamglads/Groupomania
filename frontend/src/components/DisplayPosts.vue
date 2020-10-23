@@ -12,14 +12,14 @@
                     <span> Posté {{ moment(currentPost.createdAt).fromNow() }}</span>
                 </p>
                     <hr class="my-1">
-                <h3>  {{ currentPost.title}} </h3>
+                <h3>{{currentPost.title}}</h3>
                 <!-- image publication -->
                 <div v-if="currentPost.attachment" class="post-img">
-                    <img  v-bind:src=" currentPost.attachment " alt="image">
+                    <img  :src="currentPost.attachment" alt="image">
                 </div>
                 <!-- text publication -->
                 <div class="post-content">
-                    <p>  {{ currentPost.content}}  </p>
+                    <p>{{currentPost.content}}</p>
                 </div>
             </div>
                 
@@ -40,7 +40,7 @@
                 <div v-if="currentPost.id == comment.PostId" class="display-comment">
                     <div>
                         <span><strong>{{ comment.User.firstname }}{{comment.User.lastname}}</strong> </span>
-                        <span> a commenté {{ moment(currentPost.createdAt).fromNow() }}</span>
+                        <span> a commenté {{ moment(comment.createdAt).fromNow() }}</span>
                         <p>{{comment.comment}}</p>
                     </div>               
                     <div
@@ -82,6 +82,7 @@
 //import Comment from '../components/Comment'
 import axios from 'axios'
 const moment = require('moment')
+
 moment.locale('fr')
 
 
@@ -269,7 +270,6 @@ export default {
             .display-comment{
                 display: flex;
                 justify-content: space-between;
-                align-items: center;
                 margin-top: 10px;
                 border-radius: 10px;
                 padding: 0.5em;

@@ -12,20 +12,17 @@ exports.createPost = (req, res, next) => {
     const decodedToken = jwt.verify(token, process.env.JWT_TOKEN )
     const userId = decodedToken.userId;
 
-    if (!req.body.title) {
-        return res.status(400).json({message: 'Veuillez mettre le titre de la publication!'})
-    }
-
+console.log(req)
     models.Post.create({ 
         title: req.body.title,
         content: req.body.content,
-        //attachment: JSON.parse(`${req.protocol}://${req.get('host')}/images/${req.file.filename}`),
+        attachment: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
         UserId: userId,
         likes: 0,
         include:[{ model: models.User, attributes: [ 'firstname', 'lastname']}]
     })
     .then((post) => res.status(201).json(post))
-    .catch(error => res.status(400).json(error))
+    .catch(error => res.status(500).json(error))
 
 
 }

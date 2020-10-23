@@ -89,24 +89,32 @@ export default {
         // select file
         selectFile(){
             this.post.attachment = this.$refs.file.files[0];  
+            console.log(this.post.attachment)
         },
         // create post
         createPost() {
             let postContent = {
                 title: this.post.title,
                 content: this.post.content,
-                //attachment: this.post.attachment,
+                attachment: this.post.attachment,
             }
 
             console.log(postContent)
 
             if(this.post.title =="") this.message = "Ajoutez un titre à votre publication!"
+            let formdata  = new FormData ();
+            formdata.append('attachment', postContent.attachment, postContent.attachment.name);
+              formdata.append('title', JSON.stringify(postContent.title));
+                formdata.append('content', JSON.stringify(postContent.content));
 
-            axios.post('http://localhost:3000/api/post', postContent, {
-                headers: {
-                Authorization: `Bearer ${this.userData.token}`,
-                "Content-type": "application/json"
-              },
+           
+            axios( {url: 'http://localhost:3000/api/post',
+                    method: 'post',
+                    data: formdata,
+                    headers: {
+                        Authorization: `Bearer ${this.userData.token}`
+                    }
+            
             })
             .then((response) => {
                 this.post.id = response.data.id
