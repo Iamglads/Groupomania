@@ -3,33 +3,51 @@
         <Sidebar />
         <div class="profil__content col-md-6 ">
             <section class="profil__content--info">
-                <h1>Profil</h1>
-                <div class="divider"></div>
-                <article class="profil-picture">            
-                     <div class="col-md-6">
+                <article class="info-bloc">            
+                    <div class="user-picture">
                          <i class="fas fa-user-circle"></i>
-                           
+                    </div>
+                    <div class="infos">
+                        <div> 
+                            <h1 class="name">{{user.firstname}} <strong>{{user.lastname}}</strong> <br />
+                            <span class="fonction">{{user.fonction}}</span></h1>
+                            <form class="add-picture">
+                                <span class="btn btn-file">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                Importer une photo
+                                    <input 
+                                    @change="selectFile()"
+                                    accept="images/*"
+                                    type="file" 
+                                    class="form-control-file" 
+                                    ref="file"
+                                    id="file" 
+                                    />
+                                </span>
+                                <button class="btn btn-primary" :click="addPicture()">Ajouter</button>
+                            </form>
+                        
+                        <p>  Lorem Ipsum has been the industry's standard dummy 
+                            text ever since the 1500s, when an unknown printer took 
+                            a galley of type and scrambled it to make a type specimen 
+                            book. It has survived not only five centuries, but also 
+                            the leap into electronic typesetting, remaining essentially unchanged. 
+                        </p>
                         </div>
-                    <div>
-                        <h1 class="name">{{currentUser.firstname}} <strong>{{currentUser.lastname}}</strong> <br />
-                        <span class="fonction">{{currentUser.fonction}}</span></h1>
                     </div>
                 </article>
                  <!-- update and delete profil informations -->
                 <div class="profil-actions">
                     <div @click="displayForm()" class="cursor-pointer">
                         <i class="fas fa-user-edit"></i>
-                        <span> Modifier </span>
                     </div>
-                    <div @click="deleteAccount(currentUser.id)" class="cursor-pointer">
+                    <div @click="deleteAccount(user.id)" class="cursor-pointer">
                         <i class="far fa-trash-alt"></i>
-                        <span> Suprimer</span>
                     </div>
                 </div>
             </section>
 
             <section class="profil__content--form">
-                <hr class="my-4">
                 <form v-if="editForm" id="contact-form" name="contact-form">
                     <!--Grid row-->
                     <h2>Compléter votre profil</h2>
@@ -104,7 +122,7 @@
                         </div>
                         <!--Grid row-->
                     </div>
-                    <button @click="updateInfoAccount(currentUser.id)" class="btn-update-profil col-sm-3">Enregistrer</button>
+                    <button @click="updateInfoAccount(user.id)" class="btn-update-profil col-sm-3">Enregistrer</button>
                 </form>
             </section>
         </div>
@@ -120,40 +138,65 @@ import Swal from "sweetalert2"
 
 
 export default {
-  name: "Profil",
-  components: { Sidebar },
-  data() {
-      return {
-          editForm: false,
-          message: '',
-          submitted: false,
-          updateUser: {
-              firstname: '',
-              lastname: '',
-              email: '',
-              password: '',
-              fonction: '',
-              picture: ''
-          }
-      }
-  },
-  computed: {
-      currentUser() {
-        return this.$store.state.auth.user
+    name: "Profil",
+    components: { Sidebar },
+    data() {
+        return {
+            editForm: false,
+            message: '',
+            submitted: false,
+            updateUser: {
+                firstname: '',
+                lastname: '',
+                email: '',
+                password: '',
+                fonction: '',
+                user_picture: ''
+            }
+        }
+    },
+    computed: {
+        user() {
+            return this.$store.state.user
+        },
+
+        loggedIn() {
+            return this.$store.state.loggedIn
+        }
     },
 
-    loggedIn() {
-        return this.$store.state.auth.loggedIn
-    }
-  },
+    beforeCreated() {
+        if(!this.loggedIn) {
+            this.$router.push('/')
+        }
+    },
 
-  beforeCreated() {
-      if(!this.loggedIn) {
-          this.$router.push('/')
-      }
-  },
+    methods: {
+        selectFile() {
+            this.user_picture = this.$refs.file.files[0]
+            console.log(this.user_picture)
+        },
 
-  methods: {
+        addPicture() {
+            let user_picture = this.user_picture
+            let formdata = new FormData()
+            formdata.append('user_picture', user_picture)
+
+
+            axios.post('http://localhost:5000/api/user/picture', formdata , {
+    
+                headers: {
+                Authorization: `Bearer ${this.currentUser.token}`,
+                }
+            })
+            .then(() => {
+                 console.log('vous ajoutez une photo de profil')
+            })
+            .catch(err => {
+                return err 
+            })
+        },
+
         displayForm() {
         return (this.editForm = true)
         },
@@ -177,7 +220,7 @@ export default {
                 this.updateUser.fonction = this.currentUser.fonction
             }
 
-            axios.put(`http://localhost:3000/api/user/unique/${currentUserId}`, {
+            axios.put(`http://localhost:5000/api/user/unique/${currentUserId}`, {
                 firstname: this.updateUser.firstname,
                 lastname: this.updateUser.lastname,
                 email: this.updateUser.email,
@@ -214,7 +257,7 @@ export default {
             })
             .then(result => {
                 if(result.isConfirmed) {
-                    axios.delete(`http://localhost:3000/api/user/unique/${this.currentUser.id}`, {
+                    axios.delete(`http://localhost:5000/api/user/unique/${this.user.id}`, {
                         headers: {
                         Authorization: `Bearer ${this.currentUser.token}`,
                         "Content-type": "application/json"
@@ -239,7 +282,7 @@ export default {
   },
 
   mounted() {
-      if(!this.currentUser) {
+      if(!this.user) {
           this.$router.push('/')
       }
   }
@@ -248,6 +291,9 @@ export default {
 </script>
 
 <style lang="scss">
+
+@import '@/assets/sass/variables.scss'; 
+
     .profil {
         display: flex;
         justify-content: center;
@@ -259,34 +305,57 @@ export default {
                 width: 100%;
                 font-size: 1em;
             }
+            
         }
 
         .profil__content {
             justify-content: center;
             &--info {
                 margin: auto;
-                .profil-picture {
-                    background: #ffffff;
+                background: #ffffff;
+                padding: 1em;
+                border-radius: 25px;
+                .info-bloc{
                     padding: 0.5em;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
                     border-radius: 20px;
                     margin-top: 10px;
                     .img-profil {
                         width: 100px;
                         border-radius: 100%;
                     }
+                    .infos{
+                        display: flex;
+                        justify-content: center;
+                          .btn-file input {
+                            position: absolute;
+                            top: 0;
+                            right: 0;
+                            min-width: 100%;
+                            min-height: 100%;
+                            font-size: 100px;
+
+                            opacity: 0;
+                            outline: none;   
+                            cursor: pointer;
+                            display: block;
+                            &:hover{
+                                color: $second-color;
+                            }
+                        }
+                        .fa-cloud-upload-alt{
+                            font-size: 1em;
+                            color: $second-color;
+                        }
+                    }
                     .fonction {
                         font-size: 15px;
+                        text-align: center;
                     }
                     .fa-user-circle{
                         font-size: 150px;
                     }
                     h1{
-                        @media (max-width: 600px) { 
                         text-align: center;
-                        }
                     }
                     p{
                         @media (max-width: 600px) { 
@@ -307,6 +376,12 @@ export default {
                 width: 90%;
             }
         }
+        &--form{
+            background: #ffffff;
+            padding: 1em;
+            border-radius: 25px;
+            margin-top: 30px;
+        }
    
     }
     @media (max-width: 500px) { 
@@ -317,13 +392,13 @@ export default {
 
     .btn-update-profil {
         padding: 0.3em;
-        border: 2px solid rgb(207, 82, 92);
-        color: rgb(10, 32, 66);
+        border: 2px solid $second-color;
+        color: $main-color;
         background: none;
         margin-top: 30px;
         border-radius: 5px;
         &:hover {
-            background: rgb(207, 82, 92);
+            background: $second-color;
             color: #ffffff;
         }
     }

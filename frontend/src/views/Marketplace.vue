@@ -1,6 +1,12 @@
 <template>
     <div class="marketplace"> 
-        <Sidebar />
+        <Slider
+        :width="250"
+        format="push"
+        direction="left"
+        :opacity="0.15"
+        >
+        </Slider>
         <div class="row">
             <div class="col-md-6 mt-5 mx-auto">
                 <h1>Marketplace</h1>
@@ -12,10 +18,10 @@
 
 
 <script>
-import Sidebar from '../components/Sidebar'
+import Slider from '../components/Slider'
 export default {
     name: "Marketplace",
-    components: { Sidebar}
+    components: { Slider}
 }
 </script>
 

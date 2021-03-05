@@ -10,8 +10,6 @@ require("dotenv").config()
 // signup a new USER
 exports.signup = (req, res) => {
 
-    // verification des inputs avec le middlewares verfifyEmail
-    // le password est haché avec la method hash de bcrypt
     bcrypt.hash(req.body.password, 10)
     .then(hash => {
          models.User.create({
@@ -29,12 +27,21 @@ exports.signup = (req, res) => {
       
 }
 
-/*  On vérifie que les deux champs ne soient pas vide
-    On compare le password rentré avec le password en BD avec bcrypt
-    Si le password est valid:
-    On connect l'utilisateur et le serveur nous renvoie un token, 
-    le userId, le nom, le prénom et la fonction
-*/
+// ajout d'une photo de profil
+exports.addPicture = (req, res) => {
+
+    const token = req.headers.authorization.split(' ')[1];
+    const decodedToken = jwt.verify(token, process.env.JWT_TOKEN )
+    const userId = decodedToken.userId;
+
+    models.Picture.create({
+        userId: userId,
+        user_picture: `${req.protocol}://${req.get('host')}/images/users_pictures/${req.file.filename}`
+    })
+    .then(() => res.status(200).json('message: Votre photo a été enregistrée!'))
+    .catch(err => res.status(500).json(err))
+}
+
 exports.login = (req, res, next) => {
     const email = req.body.email
     const password = req.body.password;

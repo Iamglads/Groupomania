@@ -2,17 +2,20 @@
     <div id="app">
 		<nav class="navbar fixed-top ">
 			<!-- logo groupomania -->
-			<router-link to="/" class="nav-link"> 
+			<div class="nav-link"> 
 				<img class="logo" alt="groupomania logo" src="././assets/logo.png">
-			</router-link>	
+			</div>	
 			<!-- logo groupomania end-->
 			<div>
 				<ul class="nav mr-auto">
-					<li v-if="!currentUser"  class="nav-item"> 
-						<router-link to="/" class="nav-link"> Connexion</router-link>
+					<li v-if="!user"  class="nav-item"> 
+						<router-link to="/" class="nav-link"> Se connecter</router-link>
 					</li>
-					<li v-if="!currentUser"  class="nav-item">
-						<router-link to="/signup" class="nav-link"> créer un compte</router-link>
+					<li v-if="!user"  class="nav-item">
+						<router-link to="/signup" class="nav-link"> S'inscrire</router-link>
+					</li>
+					<li v-if="user"  class="nav-item">
+						<p> Bienvenu {{ user.firstname }}</p>
 					</li>
 				</ul>
 			</div>
@@ -29,14 +32,8 @@ export default {
 	name: 'App',
 	components: { Footer},
 	computed: {
-		currentUser() {
-			return this.$store.state.auth.user
-		}
-	},
-	methods: {
-		logout() {
-			this.$store.dispatch('auth/lougout')
-			this.$router.push('/')
+		user() {
+			return this.$store.state.user
 		}
 	}
 }
@@ -44,6 +41,8 @@ export default {
 
 
 <style lang="scss">
+
+@import '@/assets/sass/variables.scss';
 
   #app {
       font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -53,7 +52,7 @@ export default {
       color: #2c3e50;
   }
    .navbar {
-        background: rgb(10, 32, 66);
+        background: $main-color;
         display: flex;
         flex-wrap: wrap;
         justify-content: space-evenly;
@@ -69,6 +68,12 @@ export default {
 			margin-left: 10px;
 			cursor: pointer;
 		}
+
+		.router-link-exact-active{
+			color: #ffffff;
+			border-bottom: 1px solid #ffffff;
+		}
+
     }
 
 

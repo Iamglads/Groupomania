@@ -12,10 +12,10 @@
 			
 			<div class="sidebar__content--header">
 				<div class="user-pic">
-					<i class="fas fa-user-circle"></i>
+					<img src="../assets/glad.png" alt="image">
 				</div>
 				<div class="user-info">
-					<span class="user-name">  {{currentUser.firstname }} <strong>  {{currentUser.lastname}}  </strong></span>
+					<span class="user-name">  {{user.firstname }} <strong>  {{user.lastname}}  </strong></span>
 				</div>
 			</div>
 			<!-- nav links -->
@@ -42,7 +42,7 @@
 						<router-link to="/events">Evènements</router-link>
 					</li>
 					<!-- deconnexion -->
-					<li class="nav-item item-logout" v-if="currentUser">	
+					<li class="nav-item item-logout" v-if="user">	
 						<a href @click.prevent="logout"> Déconnexion</a>
 					</li>
 				</ul>
@@ -53,44 +53,46 @@
 </template>
 
 <script>
-export default {
-	name: "Profil",
-	data() {
-		return {
-			active: true
-		}
-	},
-	computed: {
-		currentUser() {
-			return this.$store.state.auth.user
-		}
-	},
-
-	mounted() {
-		this.$parent.$on('toggleSidebar', () => {
-			console.log('received')
-			this.active = !this.active
-		})
-	},
-
-	methods: {
-		logout() {
-			this.$store.dispatch('auth/logout')
-			localStorage.removeItem('user')
-			this.$router.push('/')
-			window.location.reload()
+	export default {
+		name: "Profil",
+		
+		data() {
+			return {
+				active: true
+			}
+		},
+		computed: {
+			user() {
+				return this.$store.state.user
+			}
 		},
 
-		toggleSidebar() {
-			this.$parent.$emit('toggleSidebar')
+		mounted() {
+			this.$parent.$on('toggleSidebar', () => {
+				this.active = !this.active
+			})
+		},
+
+		methods: {
+			logout() {
+				this.$store.dispatch('logout')
+				this.$router.push('/')
+				window.location.reload()
+			},
+
+			toggleSidebar() {
+				this.$parent.$emit('toggleSidebar')
+			}
+
 		}
 
-	}
-
-};
+	};
 </script>
 
 <style lang="scss">
+
+@import '@/assets/sass/variables.scss';
+
 	#sidebar {
 		width: 20%;
 		min-width: 250px;
@@ -100,9 +102,14 @@ export default {
 		left: 0;
 		bottom: 0;
 		height: 100%;
+		border-right: 1px solid $second-color;
 		z-index: 10;
-		.fas{
+		.fa-user-lock, .fa-user-circle, .fa-home, .fa-calendar-alt, .fa-store {
 			margin-right: 10px;
+			font-size: 10px;
+			padding: 0.5em;
+			border: 1px solid  $main-color;
+			border-radius: 100px;
 		}
 
 	}
@@ -121,26 +128,34 @@ export default {
 			display: flex;
 			align-items: center;
 			justify-content: flex-end;
-			background: rgb(207, 82, 92);
+			background: $second-color;
 			border: none;
 			border-top-right-radius: 20px;
 			border-bottom-right-radius: 20px;
 			top: 0px;
 			right: 0px;
 			.fa-chevron-right{
-				color: white;
+				color: $white;
 				font-size: 30px;
 			}
 			.fa-chevron-left{
-				color: rgb(207, 82, 92);
+				color: $second-color;
 			}
 		}
 	}
 
 	&--header {
-		.fa-user-circle {
-			font-size: 100px;
-			color: rgb(10, 32, 66);
+		.user-pic{
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			border-radius: 100%;
+			img{
+				margin: auto;
+				max-width: 50%;
+				border-radius: 100%;
+				box-shadow: 1px 1px 6px 1px rgb(216, 216, 216);
+			}
 		}
 	}
 
@@ -152,14 +167,18 @@ export default {
 				display: block;
 				.nav-item{
 					&:hover{
-						margin-left: 10px;
+						color: $second-color;
 						transition: 0.5s;
 					}
+					.router-link-active{
+						color: $second-color
+					}
+
 				}
 			}
 			li {
 				font-size: 20px;
-				color: rgb(10, 32, 66);
+				color:  $main-color;
 				margin-bottom: 15px;
 				text-align: left;
 			}

@@ -4,7 +4,7 @@
 
 
 
-* Open Client
+# Open Client
 
 - cd frontend
 - npm install 
@@ -14,9 +14,11 @@
 * database 
 - CREATE DATABASE database_groupomania;
 
+backend 
+add folder config/config.json
 
 
-* Run Server 
+# Run Server 
 - cd backend
 - npm install 
 - sequelize-cli db:migrate

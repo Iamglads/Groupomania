@@ -40,13 +40,15 @@ app.use('/images', express.static(path.join(__dirname, 'images')))
 	comments 
 	likes 
 */ 
-const routes = require('./routes/routes')
 
-
+// routes
+const userRoute = require('./routes/userRoute')
+const postRoute = require('./routes/postRoute')
+const commentRoute = require('./routes/commentRoute')
 
 
 // use route
-app.use('/api', routes)
+app.use('/api', userRoute, postRoute, commentRoute)
 
 
 module.exports = app

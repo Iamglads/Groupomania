@@ -6,7 +6,7 @@
                 <div class="divider"></div>
                 <form id="contact-form" name="contact-form" @submit.prevent="handleSignup()">
                     <!--Grid row-->
-                    <div v-if="!successful" class="row">
+                    <div class="row">
                         <!--Grid column firstname-->
                             <div class="col-md-6">
                             <div class="md-form mb-0">
@@ -83,16 +83,13 @@
                         </div>
                         <!--Grid row-->
                     </div>
-
                     <button class="btn-signup col-md-12">S'incrire</button> 
-                    <p> <router-link to="/">Connectez-vous! </router-link></p>
                 </form>
+                <p> Vous avez déjà un compte? <router-link to="/">Connectez-vous! </router-link></p>
                 <!-- alert message error -->
-                    <div
-                    v-if="message"
-                    class="alert"
+                <p v-if="message" class="alert"
                     :class="successful ? 'alert-success' : 'alert-danger'"
-                    >{{ message }}</div>
+                    >{{ message }}</p>
             </div>
         </div>
     </div>
@@ -109,14 +106,14 @@ export default {
         return {
             user : new User('', '', '', '', ''),
             submitted: false,
-            successful: false,
-            message: ''
+            message: '',
+            successful: false
         }
     },
 
     computed: {
         loggedIn() {
-            return this.$store.state.auth.status.loggedIn
+            return this.$store.state.status.loggedIn
         }
     },
 
@@ -133,7 +130,7 @@ export default {
             this.$validator.validate()
             .then(isValid => {
                 if(isValid) {
-                    this.$store.dispatch('auth/signup', this.user)
+                    this.$store.dispatch('signup', this.user)
                     .then(data => {
                         this.message = data.message
                         this.successful = true
@@ -154,6 +151,9 @@ export default {
 
 
 <style lang="scss">
+    #contact-form{
+        margin-bottom: 30px;
+    }
     .container{
         margin-top: 150px;
         h1{

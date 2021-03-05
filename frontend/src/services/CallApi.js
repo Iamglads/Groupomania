@@ -1,10 +1,12 @@
 import axios from 'axios'
 
 
-const url= 'http://localhost:3000/api/user/'
+const url= 'http://localhost:5000/api/user/'
+const urlpost = 'http://localhost:5000/api/post'
+const userData = JSON.parse(localStorage.getItem('user'))
 
 
-class AuthService {
+class CallApi {
 
     // for login
     login(user) {
@@ -37,6 +39,16 @@ class AuthService {
             fonction: user.fonction
         })
     }
+
+    getPosts() {
+        return axios.get(urlpost, {
+            headers: {
+                Authorization: `Bearer ${userData.token}`,
+                "Content-type": "application/json"
+          }
+        })
+
+    }
 }
 
-export default new AuthService()
+export default new CallApi() 

@@ -2,24 +2,24 @@
     <!-- all posts -->
     <section  class="display__posts">
         <!-- boucle dans le tableau afin de recupérer tous les posts -->
-        <article v-for="currentPost in currentPosts" :key="currentPost.id"  class="display__posts--bloc">
+        <article v-for="post in posts" :key="post.id"  class="display__posts--bloc">
              <!--  publication -->
             <div>
                  <p> 
                     <i class="fas fa-user-clock"></i>
-                        {{currentPost.User.firstname}}
-                    <strong>  {{currentPost.User.lastname}} </strong> - 
-                    <span> Posté {{ moment(currentPost.createdAt).fromNow() }}</span>
+                        {{post.User.firstname}}
+                    <strong>  {{post.User.lastname}} </strong> - 
+                    <span> Posté {{ moment(post.createdAt).fromNow() }}</span>
                 </p>
                     <hr class="my-1">
-                <h3>{{currentPost.title}}</h3>
+                <h3>{{post.title}}</h3>
                 <!-- image publication -->
-                <div v-if="currentPost.attachment" class="post-img">
-                    <img  :src="currentPost.attachment" alt="image">
+                <div v-if="post.attachment" class="post-img">
+                    <img  :src="post.attachment" alt="image">
                 </div>
                 <!-- text publication -->
                 <div class="post-content">
-                    <p>{{currentPost.content}}</p>
+                    <p>{{post.content}}</p>
                 </div>
             </div>
                 
@@ -31,20 +31,20 @@
                 class="input-comment" 
                 placeholder="Commenter" 
                 />
-                <span @click.prevent="createComment(currentPost.id)" class="validate-comment cursor-pointer">
+                <span @click.prevent="createComment(post.id)" class="validate-comment cursor-pointer">
                     <i class="fas fa-check"></i>
                 </span>
             </div> 
             <!-- display comments -->               
-            <div v-for="comment in currentComments" :key="comment.id">
-                <div v-if="currentPost.id == comment.PostId" class="display-comment">
+            <div v-for="comment in comments" :key="comment.id">
+                <div v-if="post.id == comment.PostId" class="display-comment">
                     <div>
                         <span><strong>{{ comment.User.firstname }}{{comment.User.lastname}}</strong> </span>
                         <span> a commenté {{ moment(comment.createdAt).fromNow() }}</span>
                         <p>{{comment.comment}}</p>
                     </div>               
                     <div
-                    v-if="currentUser.id == comment.UserId || currentUser.isAdmin"
+                    v-if="user.id == comment.UserId || user.isAdmin"
                     @click.prevent="deleteComment(comment.id)" 
                     class="cursor-pointer"
                     >
@@ -61,12 +61,12 @@
                 </div>  -->
                <!--  <div class="cursor-pointer">
                     <i class="fas fa-comment-dots"></i> 
-                    <span > {{commentQuantity(currentPost.id).length}}</span>
+                    <span > {{commentQuantity(post.id).length}}</span>
                 </div>  -->
                 <!-- Delete post-->
                     <div
-                    v-if="currentUser.id == currentPost.UserId || currentUser.isAdmin"
-                    @click.prevent="deletePost(currentPost.id)" 
+                    v-if="user.id == post.UserId || user.isAdmin"
+                    @click.prevent="deletePost(post.id)" 
                     class="cursor-pointer"
                 >
                     <i  class="far fa-trash-alt"></i>
@@ -81,6 +81,7 @@
 // imports 
 //import Comment from '../components/Comment'
 import axios from 'axios'
+import CallApi from '../services/CallApi'
 const moment = require('moment')
 
 moment.locale('fr')
@@ -92,8 +93,8 @@ export default {
         return {
             moment: moment,
             userData : JSON.parse(localStorage.getItem("user")),
-            currentPosts: [],
-            currentComments: [],
+            posts: [],
+            comments: [],
             message: "",
             submitted: false,
             comment: '',
@@ -102,39 +103,32 @@ export default {
     },
 
     computed: {
-        currentUser() {
-            return this.$store.state.auth.user
+        user() {
+            return this.$store.state.user
         }
     },
     // get and display all posts
     beforeCreate() {
             let userData = JSON.parse(localStorage.getItem("user"))
             let token = userData.token
-            // posts
-            axios.get('http://localhost:3000/api/post', {
-                 headers: {
-                    Authorization: `Bearer ${userData.token}`,
-                    "Content-type": "application/json"
-              },
+          
+            CallApi.getPosts()
+            .then(response => {
+                this.posts = response.data
+                return Promise.resolve(response.data)
+
             })
-            .then((response) => {
-                if(!response) return []
-                else {
-                    this.currentPosts = response.data
-                    //console.log(response.data);
-                }
-            })
-            .catch((err) => console.log(err));
+            .catch(err => console.log(err))
 
             // comments
-            axios.get('http://localhost:3000/api/comment', {
+            axios.get('http://localhost:5000/api/comment', {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     "Content-type": "application/json"
                 }
             })
             .then((response) => {
-                this.currentComments = response.data
+                this.comments = response.data
             })
             .catch((err) => console.log(err))
         
@@ -152,7 +146,7 @@ export default {
 
             if(this.comment =="") this.message = "Vous commentaire est vide!"
 
-            axios.post('http://localhost:3000/api/comment', postComment, {
+            axios.post('http://localhost:5000/api/comment', postComment, {
                 headers: {
                 Authorization: `Bearer ${token}`,
                 "Content-type": "application/json"
@@ -168,12 +162,12 @@ export default {
         },
 
         // delete post
-        deletePost(currentPostId) {
+        deletePost(postId) {
             let userData = JSON.parse(localStorage.getItem('user'))
             let token = userData.token
             console.log(userData)
 
-            axios.delete(`http://localhost:3000/api/post/${currentPostId}`, {
+            axios.delete(`http://localhost:5000/api/post/${postId}`, {
                 headers: {
                 Authorization: `Bearer ${token}`,
                 "Content-type": "application/json"
@@ -191,7 +185,7 @@ export default {
             let userData = JSON.parse(localStorage.getItem('user'))
             let token = userData.token
 
-            axios.delete(`http://localhost:3000/api/comment/${commentId}`, {
+            axios.delete(`http://localhost:5000/api/comment/${commentId}`, {
                 headers: {
                 Authorization: `Bearer ${token}`,
                 "Content-type": "application/json"
@@ -204,8 +198,9 @@ export default {
             .catch(error  => { return error });
 
         },
+
         commentQuantity(id) {
-            const quantity = this.currentComments.filter((comment) => comment.postId == id)
+            const quantity = this.comments.filter((comment) => comment.postId == id)
             return quantity
         }
 
@@ -218,7 +213,7 @@ export default {
         &--bloc{
             height: auto;
             background: #ffffff;
-            border-radius: 20px;
+            border-radius: 10px;
             padding: 1em;
             margin-bottom: 10px;
             .post-img{
