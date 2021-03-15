@@ -1,0 +1,21 @@
+  <!--  <span class="btn btn-file">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                                <input 
+                                @change="selectFile()"
+                                accept="images/*"
+                                type="file" 
+                                class="form-control-file" 
+                                ref="file"
+                                id="file" 
+                                />
+                            </span> -->
+
+
+
+                  "development": {
+    "username": "gladstonycglad",
+    "password": "Gladetjuju-973",
+    "database": "gladstonycglad",
+    "host": "gladstonycglad.mysql.db",
+    "dialect": "mysql"
+  },

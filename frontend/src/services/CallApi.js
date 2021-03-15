@@ -1,8 +1,8 @@
 import axios from 'axios'
 
-
-const url= 'http://localhost:5000/api/user/'
-const urlpost = 'http://localhost:5000/api/post'
+const url = 'http://localhost:5000/api/'
+const urlpost = url + 'post'
+const urlComments = url + 'comment' 
 const userData = JSON.parse(localStorage.getItem('user'))
 
 
@@ -11,7 +11,7 @@ class CallApi {
     // for login
     login(user) {
         return axios 
-        .post(url + 'login', {
+        .post(url + 'user/login', {
             email: user.email,
             password: user.password
         })
@@ -31,7 +31,7 @@ class CallApi {
 
     // for register user
     signup(user) {
-        return axios.post(url + 'signup', {
+        return axios.post(url + 'user/signup', {
             firstname: user.firstname,
             lastname: user.lastname,
             email: user.email,
@@ -49,6 +49,16 @@ class CallApi {
         })
 
     }
+
+    getComments () {
+        return axios.get(urlComments, {
+            headers: {
+                Authorization: `Bearer ${userData.token}`,
+                "Content-type": "application/json"
+          }
+        })
+    }
+
 }
 
 export default new CallApi() 

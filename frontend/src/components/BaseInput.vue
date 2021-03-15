@@ -1,5 +1,5 @@
 <template>
-      <div class="md-form mb-3">
+    <div class="md-form mt-3">
         <input 
         class="form-control"
         v-bind="$attrs"
@@ -7,7 +7,7 @@
         :placeholder="label"
         @input="$emit('update:modelValue', $event.target.Value)"
         />
-      </div>
+    </div>
 </template>
 
 

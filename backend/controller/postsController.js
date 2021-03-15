@@ -12,7 +12,6 @@ exports.createPost = (req, res, next) => {
     const decodedToken = jwt.verify(token, process.env.JWT_TOKEN )
     const userId = decodedToken.userId;
 
-console.log(req)
     models.Post.create({ 
         title: req.body.title,
         content: req.body.content,

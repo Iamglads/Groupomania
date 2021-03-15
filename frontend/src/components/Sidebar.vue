@@ -31,7 +31,7 @@
 					</li>
 					<li class="nav-item">
 						<i class="fas fa-home"></i>
-						<router-link to="/home">Forum</router-link>
+						<router-link to="/home">Accueil</router-link>
 					</li>
 					<li class="nav-item">
 						<i class="fas fa-store"></i>

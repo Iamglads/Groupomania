@@ -1,37 +1,18 @@
 <template>
-    <div class="container">
+    <section id="signup">
         <div class="row">
             <div class="col-md-6 mt-5 mx-auto">
                 <h1>Créer un compte</h1>
                 <div class="divider"></div>
-                <form id="contact-form" name="contact-form" @submit.prevent="handleSignup()">
+                <form class="signup-form"  @submit.prevent="handleSignup()">
                     <!--Grid row-->
                     <div class="row">
                         <!--Grid column firstname-->
-                            <div class="col-md-6">
-                            <div class="md-form mb-0">
-                                <label for="firstname" class=""></label>
-                                <input 
-                                v-model="user.firstname"
-                                type="text" 
-                                class="form-control" 
-                                placeholder="Prénom"
-                                required
-                                />
-                            </div>
+                        <div class="col-md-6">
+                            <BaseInput type="text" label="Prénom" v-model="user.firstname" required="true"/>
                         </div>
                         <div class="col-md-6">
-                            <div class="md-form mb-0">
-                                <label for="lastname" class=""></label>
-                                <input 
-                                v-model="user.lastname"
-                                type="text" 
-                                name="lastname" 
-                                class="form-control" 
-                                placeholder="Nom"
-                                required
-                                />
-                            </div>
+                            <BaseInput type="text" label="Nom" v-model="user.lastname" required="true"/>
                         </div>
                         <!--Grid column-->
                     </div>
@@ -39,69 +20,35 @@
                     <!--Grid row-->
                     <div class="row">
                         <div class="col-md-12">
-                            <div class="md-form mb-0">
-                                <label for="email" class=""></label>
-                                <input 
-                                v-model="user.email"
-                                type="email" 
-                                name="email" 
-                                class="form-control" 
-                                placeholder="E-mail"
-                                required
-                                />
-                            </div>
-                            <div
-                            v-if="submitted && errors.has('email')"
-                            class="alert-danger"
-                            >{{ errors.first('email') }}</div>
+                            <BaseInput type="email" label="E-mail" v-model="user.email" required="true"/>
                         </div>
                         <div class="col-md-12">
-                            <div class="md-form mb-0">
-                                <label for="password" class=""></label>
-                                <input 
-                                v-model="user.password"
-                                type="password" 
-                                id="password" 
-                                name="password" 
-                                class="form-control" 
-                                placeholder="Mot de passe"
-                                required
-                                />
-                            </div>
+                            <BaseInput type="password" label="Mot de passe" v-model="user.password" required="true"/>
                         </div>
                          <div class="col-md-12">
-                            <div class="md-form">
-                                <label for="fonction" class=""></label>
-                                <input 
-                                v-model="user.fonction"
-                                type="text" 
-                                name="fonction" 
-                                class="form-control" 
-                                placeholder="Fonction"
-                                />
-                            </div>
-                        </div>
+                            <BaseInput type="text" label="Fonction" v-model="user.fonction" required="true"/>
+                        </div>                     
                         <!--Grid row-->
                     </div>
-                    <button class="btn-signup col-md-12">S'incrire</button> 
+                    <button type="submit" class="btn-signup col-md-12">S'incrire</button> 
                 </form>
                 <p> Vous avez déjà un compte? <router-link to="/">Connectez-vous! </router-link></p>
                 <!-- alert message error -->
-                <p v-if="message" class="alert"
-                    :class="successful ? 'alert-success' : 'alert-danger'"
-                    >{{ message }}</p>
+                <p v-if="message" class="alert" :class="successful ? 'alert-success' : 'alert-danger'">{{ message }}</p>
             </div>
         </div>
-    </div>
+    </section>
 </template>
 
 
 <script>
 
 import User from '../models/user'
+import BaseInput from '../components/BaseInput'
 
 export default {
     name : 'Signup',
+    components: { BaseInput },
     data() {
         return {
             user : new User('', '', '', '', ''),
@@ -138,8 +85,7 @@ export default {
                     error => {
                         this.message = (error.response.data) || error.message || error.toString()
                         this.successful = false
-                    }
-                    )
+                    })
                     .catch(error => console.log(error))
                 }
             })
@@ -151,34 +97,38 @@ export default {
 
 
 <style lang="scss">
-    #contact-form{
-        margin-bottom: 30px;
-    }
-    .container{
-        margin-top: 150px;
+   
+    #signup{
+        padding: 150px 1em;
+        background: rgb(216, 216, 216);
         h1{
             color: rgb(10, 32, 66);
             text-align: left;
         }
-        label{
-            text-align: left;
-        }
         .divider{
-            width: 70px;
-            height: 3px;
-            background-color: rgb(207, 82, 92);
+                width: 70px;
+                height: 3px;
+                background-color: rgb(207, 82, 92);
+                margin-bottom: 30px;
         }
-        .btn-signup{
-            padding: .3em;
-            border: 2px solid rgb(207, 82, 92);
-            color: rgb(10, 32, 66);
-            background: none;
-            margin-top: 50px;
-            border-radius: 5px;
-            &:hover{
-                background:rgb(207, 82, 92);
-                color: #ffffff;
+         .signup-form{
+              margin-bottom: 20px;
+            label{
+                text-align: left;
             }
-        }
+            .btn-signup{
+                padding: .3em;
+                border: 2px solid rgb(207, 82, 92);
+                color: rgb(10, 32, 66);
+                background: none;
+                margin-top: 30px;
+                border-radius: 5px;
+                &:hover{
+                    background:rgb(207, 82, 92);
+                    color: #ffffff;
+                }
+            }
+         }
+        
     }
 </style>

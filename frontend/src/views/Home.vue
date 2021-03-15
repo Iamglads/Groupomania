@@ -2,55 +2,49 @@
     <div class="home">
         <Sidebar />
         <div class="home__content ">
-            <div class="home__content--block col-md-6">
-                <div class="home__content--form">
-                    <h1> {{ user.firstname }} Publiez un poste... </h1>
-                    <!-- post form -->
-                    <form class="home-form" enctype="formdata">
+            <div class="home__content--createPost">
+                <h1> 
+                    {{ user.firstname }}, Publiez maintenant
+                </h1>
+                <!-- post form -->
+                <form enctype="formdata">
+                    <md-field>
+                        <label>Titre de la publication</label>
+                        <md-input 
+                        v-model="post.title" 
+                        aria-describedby="Titre de la publication"
+                        @focus="showAllForm = true"
+                        @keydown="showAllForm = true"
+                        ></md-input>
+                    </md-field>
+                    <div v-if="showAllForm">
+                        <md-field>
+                            <label>Votre publication</label>
+                            <md-textarea v-model="post.content"></md-textarea>
+                        </md-field>
                         <div>
-                            <input 
-                            v-model="post.title"
-                            type="text" 
-                            class="form-control" 
-                            aria-describedby="emailHelp" 
-                            placeholder="Titre de la publication" 
-                            />
-                        </div>
-                        <div>
-                            <textarea 
-                            v-model="post.content"
-                            type="textarea" 
-                            class="form-control" 
-                            placeholder="Ecrire votre publication" 
-                            />
-                        </div>
-                        <div> 
-                             <!-- display erros -->
-                            <p v-if="message" class="alert alert-danger"> {{ message }}</p>
-                        </div>
-                        <div class="select-img-and-btn">
-                            <span class="btn btn-file">
-                            <i class="fas fa-cloud-upload-alt"></i>
-                            Importer une image
+                            <md-field>
                                 <input 
                                 @change="selectFile()"
                                 accept="images/*"
                                 type="file" 
-                                class="form-control-file" 
                                 ref="file"
                                 id="file" 
                                 />
-                            </span>
-                             <!-- submit button fom -->
+                            </md-field>
+                                <!-- submit button fom -->
                             <button @click="createPost()" type="submit" class="btn-post col-sm-3">Publier</button>
+                                <!-- display erros -->
+                            <div> 
+                                <p v-if="message" class="alert alert-danger"> {{ message }}</p>
+                            </div>
                         </div>
-                    </form>
-                     <!-- form add post -->
-                </div>
-                <!-- all posts -->
-                <DisplayPosts />
-                <!-- all posts end-->
+                    </div>
+                </form>
+                    <!-- form add post -->
             </div>
+            <!-- COMPONENT DISPLAY POST -->
+            <DisplayPosts />
         </div>
     </div>
 </template>
@@ -61,18 +55,20 @@ import DisplayPosts from '../components/DisplayPosts'
 import Sidebar from '../components/Sidebar'
 import axios from 'axios'
 
+
 export default {
     name: "Home",
+    
     components: { Sidebar, DisplayPosts},
     data() {
         return {
-            userData : JSON.parse(localStorage.getItem("user")),
             message: "",
             submitted: false,
+            showAllForm: false,
             post: {
-                title: '',
-                content: '',
-                attachment: '',
+                title: "",
+                content: "",
+                attachment: "",
             }
         }
     },
@@ -95,7 +91,7 @@ export default {
     methods: {
         // select file
         selectFile(){
-            this.post.attachment = this.$refs.file.files[0];  
+            this.post.attachment = this.$refs.file.files[0]
             console.log(this.post.attachment)
         },
         // create post
@@ -106,20 +102,19 @@ export default {
                 attachment: this.post.attachment,
             }
 
-            console.log(postContent)
 
             if(this.post.title =="") this.message = "Ajoutez un titre à votre publication!"
             let formdata  = new FormData ();
             formdata.append('attachment', postContent.attachment, postContent.attachment.name);
-              formdata.append('title', JSON.stringify(postContent.title));
-                formdata.append('content', JSON.stringify(postContent.content));
+              formdata.append('title', postContent.title);
+                formdata.append('content', postContent.content);
 
            
             axios( {url: 'http://localhost:5000/api/post',
                     method: 'post',
                     data: formdata,
                     headers: {
-                        Authorization: `Bearer ${this.userData.token}`
+                        Authorization: `Bearer ${this.user.token}`
                     }
             
             })
@@ -141,74 +136,41 @@ export default {
  
  @import '@/assets/sass/variables.scss';
 
-    .home{
-        display: flex;
-        justify-content: center;
-        .home__content{
-            width: 80%;
-            display: flex;
-            justify-content: center;
-            margin-top: 120px;
-            &--form{
-                background: #ffffff;
-                border-radius: 10px;
-                padding: 1em;
-                margin-bottom: 30px;
-            }
-            .home-form{
-                .form-control{
-                    border-radius: 10px;
-                    margin-top: 10px;
-                    font-size: 14px;
-                }
-                .select-img-and-btn{
-                    margin-top: 10px;
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    .btn-file {
-                        position: relative;
-                        overflow: hidden;
-                        padding: .3em;
-                        border: 1px solid $second-color;
-                    }
-                    .btn-file input[type=file] {
-                        position: absolute;
-                        top: 0;
-                        right: 0;
-                        min-width: 100%;
-                        min-height: 100%;
-                        font-size: 100px;
-                        text-align: right;
-                        filter: alpha(opacity=0);
-                        opacity: 0;
-                        outline: none;   
-                        cursor: inherit;
-                        display: block;
-                        cursor: pointer;
-                    }
-                    .fa-cloud-upload-alt{
-                        font-size: 1em;
-                        color: $second-color;
-                    }
-                }
-                .btn-post{
-                    padding: .3em;
-                    border: 1px solid $second-color;
-                    color: $main-color;
-                    background: none;
-                    margin-top: 10px;
-                    border-radius: 5px;
-                    max-width: 100px;
-                    &:hover{
-                        background:$second-color;
-                        color: #ffffff;
-                    }
-                }
-            }
-            
+.home{
+    display: flex;
+    justify-content: center;
+    background: rgb(216, 216, 216);
+    .home__content{
+        width: 60%;
+        min-width: 300px;
+        padding: 130px 1em;
+        &--createPost{
+            background: #ffffff;
+            border-radius: 10px;
+            padding: 1em;
+            margin-bottom: 10px;
         }
 
+        .btn-post{
+            padding: .3em;
+            border: 1px solid $second-color;
+            color: $main-color;
+            background: none;
+            margin-top: 10px;
+            border-radius: 5px;
+            max-width: 100px;
+            &:hover{
+                background:$second-color;
+                color: #ffffff;
+            }
+        }
+    
+
+        @media screen and (max-width: 400px){
+            width: 100%;
+        }  
     }
+
+}
 
 </style>

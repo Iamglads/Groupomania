@@ -20,27 +20,14 @@ exports.signup = (req, res) => {
             fonction: req.body.fonction,
             isAdmin: 0
         })
-        .then(() => res.status(201).send({ message: 'Utilisateur créé! '}))
+        .then(() => res.status(201).send({ message: 'Votre compte a été créé! '}))
         .catch(error => res.status(400).send(log(error)))
     })
     .catch(error => res.status(500).send(log(error)))
       
 }
 
-// ajout d'une photo de profil
-exports.addPicture = (req, res) => {
 
-    const token = req.headers.authorization.split(' ')[1];
-    const decodedToken = jwt.verify(token, process.env.JWT_TOKEN )
-    const userId = decodedToken.userId;
-
-    models.Picture.create({
-        userId: userId,
-        user_picture: `${req.protocol}://${req.get('host')}/images/users_pictures/${req.file.filename}`
-    })
-    .then(() => res.status(200).json('message: Votre photo a été enregistrée!'))
-    .catch(err => res.status(500).json(err))
-}
 
 exports.login = (req, res, next) => {
     const email = req.body.email
@@ -128,4 +115,22 @@ exports.deleteUser = (req, res, next) => {
     })
     .then(() => res.status(200).send({ message: 'La suppression est effectuée!'}))
     .catch((error) => res.status(500).send(error))
+}
+
+
+// ajout d'une photo de profil
+exports.addPicture = (req, res) => {
+
+    const token = req.headers.authorization.split(' ')[1];
+    const decodedToken = jwt.verify(token, process.env.JWT_TOKEN )
+    const userId = decodedToken.userId;
+
+    console.log(req.file)
+
+    models.Picture.create({
+        userId: userId,
+        user_picture: `${req.protocol}://${req.get('host')}/images/users_pictures/${req.file.filename}`
+    })
+    .then(() => res.status(200).json('message: Votre photo a été enregistrée!'))
+    .catch(err => console.log(err))
 }
