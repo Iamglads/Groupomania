@@ -209,6 +209,7 @@ export default {
 @import '@/assets/sass/variables.scss'; 
 
     .profil {
+        height: 100%;
         display: flex;
         justify-content: center;
         background: rgb(216, 216, 216);

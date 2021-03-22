@@ -19,10 +19,11 @@ export default {
 
 <style lang="scss" >
      .marketplace{
-        width: 70%;
+        height: 100%;
         display: flex;
         justify-content: center;
         padding-top: 110px;
+        background: rgb(216, 216, 216);
     }
 
 </style>

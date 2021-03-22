@@ -9,7 +9,7 @@
                     <!--identifiant -->
                     <div class="row">
                         <div class="col-md-6">
-                            <div class="md-form mt-3">
+                            <div class="md-form">
                                 <label for="email"></label> <br />
                                 <input 
                                 v-model="user.email"
@@ -28,7 +28,7 @@
                         </div>
                         <div class="col-md-6">
                              <!--Password -->
-                            <div  class="md-form mt-3">
+                            <div  class="md-form">
                                 <label for="password"></label> <br />
                                 <input 
                                 v-model="user.password"
@@ -110,9 +110,12 @@ export default {
 
 <style lang="scss">
     #login{
+        display: flex;
+        justify-content: center;
+        align-items: center;
         height: 100%;
-        padding: 50px 1em;
-         background: rgb(216, 216, 216);
+        padding: 1em;
+        background: rgb(216, 216, 216);
         .divider{
             width: 70px;
             height: 3px;

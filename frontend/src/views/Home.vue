@@ -141,6 +141,7 @@ export default {
     display: flex;
     justify-content: center;
     background: rgb(216, 216, 216);
+    height: 100%;
     .home__content{
         width: 60%;
         min-width: 300px;

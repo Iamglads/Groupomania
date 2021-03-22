@@ -1,5 +1,5 @@
 <template>
-    <div class="md-form mt-3">
+    <div class="md-form mt-1">
         <input 
         class="form-control"
         v-bind="$attrs"
