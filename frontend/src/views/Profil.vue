@@ -1,6 +1,5 @@
 <template>
     <div class="profil">
-        <Sidebar />
         <card class="profil__content--info">
             <md-card class="info-bloc">            
                 <md-card-media class="user-picture">
@@ -45,7 +44,6 @@
 <script>
 
 // imports 
-import Sidebar from "../components/Sidebar";
 import UpdateProfil from "../components/UpdateProfil"
 import axios from "axios"
 import Swal from "sweetalert2"
@@ -53,10 +51,9 @@ import Swal from "sweetalert2"
 
 export default {
     name: "Profil",
-    components: { Sidebar, UpdateProfil },
+    components: { UpdateProfil },
     data() {
         return {
-            userData : JSON.parse(localStorage.getItem("user")),
             editForm: false,
             message: '',
             submitted: false,
@@ -103,7 +100,7 @@ export default {
 
             axios.post('http://localhost:5000/api/user/picture', formdata , {
                 headers: {
-                Authorization: `Bearer ${this.userData.token}`,
+                Authorization: `Bearer ${this.user.token}`,
                 }
             })
             .then(() => {
@@ -176,7 +173,7 @@ export default {
                 if(result.isConfirmed) {
                     axios.delete(`http://localhost:5000/api/user/unique/${this.user.id}`, {
                         headers: {
-                        Authorization: `Bearer ${this.userData.token}`,
+                        Authorization: `Bearer ${this.user.token}`,
                         "Content-type": "application/json"
                     },
                     })
@@ -214,7 +211,6 @@ export default {
     .profil {
         display: flex;
         justify-content: center;
-        padding-top: 120px;
         background: rgb(216, 216, 216);
 
         .profil__content {
@@ -222,7 +218,6 @@ export default {
             &--info {
                 margin: auto;
                 padding: 1em;
-                max-width: 400px;
                 .info-bloc{
                     padding: 0.5em;
                     margin-top: 10px;
@@ -232,13 +227,9 @@ export default {
                     }
                     .fonction {
                         font-size: 15px;
-                        text-align: center;
                     }
                     .fa-user-circle{
                         font-size: 150px;
-                    }
-                    h1{
-                        text-align: center;
                     }
                     p{
                         @media (max-width: 600px) { 

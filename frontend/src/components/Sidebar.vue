@@ -1,15 +1,6 @@
 <template>
-    <nav v-bind:class="{active: active} " id="sidebar">
-		<div class="sidebar__content">
-			<div class="sidebar__content--chevron">
-				<!-- toggle button -->
-				<button @click="toggleSidebar()" class="btn-chevron-right">
-					<i class="fas fa-chevron-left"></i> 
-					<i class="fas fa-chevron-right"></i>
-				</button>
-				<!-- toggle button end -->
-			</div>
-			
+    <div v-bind:class="{active: active} " id="sidebar">
+		<div class="sidebar__content">	
 			<div class="sidebar__content--header">
 				<div class="user-pic">
 					<img src="../assets/glad.png" alt="image">
@@ -49,28 +40,17 @@
 			</div>
 			<!-- nav links -->
 		</div>
-    </nav>
+    </div>
 </template>
 
 <script>
 	export default {
 		name: "Profil",
-		
-		data() {
-			return {
-				active: true
-			}
-		},
+
 		computed: {
 			user() {
 				return this.$store.state.user
 			}
-		},
-
-		mounted() {
-			this.$parent.$on('toggleSidebar', () => {
-				this.active = !this.active
-			})
 		},
 
 		methods: {
@@ -78,12 +58,7 @@
 				this.$store.dispatch('logout')
 				this.$router.push('/')
 				window.location.reload()
-			},
-
-			toggleSidebar() {
-				this.$parent.$emit('toggleSidebar')
 			}
-
 		}
 
 	};
@@ -102,7 +77,6 @@
 		left: 0;
 		bottom: 0;
 		height: 100%;
-		border-right: 1px solid $second-color;
 		z-index: 10;
 		.fa-user-lock, .fa-user-circle, .fa-home, .fa-calendar-alt, .fa-store {
 			margin-right: 10px;
@@ -116,33 +90,7 @@
 
 	.sidebar__content {
 		display: block;
-		margin-top: 110px;
-
-	&--chevron{
-		display: flex;
-		justify-content: flex-end;
-		margin-right: -40px;
-		.btn-chevron-right{
-			width: 40px;
-			height: 40px;
-			display: flex;
-			align-items: center;
-			justify-content: flex-end;
-			background: $second-color;
-			border: none;
-			border-top-right-radius: 20px;
-			border-bottom-right-radius: 20px;
-			top: 0px;
-			right: 0px;
-			.fa-chevron-right{
-				color: $white;
-				font-size: 30px;
-			}
-			.fa-chevron-left{
-				color: $second-color;
-			}
-		}
-	}
+		margin-top: 50px;
 
 	&--header {
 		.user-pic{
@@ -188,10 +136,5 @@
 
 			}
 		}
-	}
-
-	.active {
-		margin-left: -250px;
-		transition: 1s;
 	}
 </style>

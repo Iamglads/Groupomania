@@ -110,7 +110,8 @@ export default {
 
 <style lang="scss">
     #login{
-        padding: 150px 1em;
+        height: 100%;
+        padding: 50px 1em;
          background: rgb(216, 216, 216);
         .divider{
             width: 70px;

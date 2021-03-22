@@ -99,7 +99,8 @@ export default {
 <style lang="scss">
    
     #signup{
-        padding: 150px 1em;
+        height: 100%;
+        padding: 50px 1em;
         background: rgb(216, 216, 216);
         h1{
             color: rgb(10, 32, 66);

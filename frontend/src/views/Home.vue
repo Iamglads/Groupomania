@@ -1,6 +1,5 @@
 <template>
     <div class="home">
-        <Sidebar />
         <div class="home__content ">
             <div class="home__content--createPost">
                 <h1> 
@@ -52,24 +51,25 @@
 <script>
 // imports 
 import DisplayPosts from '../components/DisplayPosts'
-import Sidebar from '../components/Sidebar'
 import axios from 'axios'
 
 
 export default {
     name: "Home",
     
-    components: { Sidebar, DisplayPosts},
+    components: { DisplayPosts},
     data() {
         return {
             message: "",
             submitted: false,
             showAllForm: false,
+            drawer: null,
             post: {
                 title: "",
                 content: "",
                 attachment: "",
             }
+        
         }
     },
     
@@ -77,6 +77,7 @@ export default {
         loggedIn() {
         return this.$store.state.status.loggedIn
         },
+        
          user() {
             return this.$store.state.user
         }
@@ -143,7 +144,6 @@ export default {
     .home__content{
         width: 60%;
         min-width: 300px;
-        padding: 130px 1em;
         &--createPost{
             background: #ffffff;
             border-radius: 10px;

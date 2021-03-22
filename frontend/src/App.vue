@@ -1,39 +1,50 @@
 <template>
-    <div id="app">
-		<nav class="navbar fixed-top ">
-			<!-- logo groupomania -->
-			<div class="nav-link"> 
-				<img class="logo" alt="groupomania logo" src="././assets/logo.png">
-			</div>	
-			<!-- logo groupomania end-->
-			<div>
-				<ul class="nav mr-auto">
-					<li v-if="!user"  class="nav-item"> 
-						<router-link to="/" class="nav-link"> Se connecter</router-link>
-					</li>
-					<li v-if="!user"  class="nav-item">
-						<router-link to="/signup" class="nav-link"> S'inscrire</router-link>
-					</li>
-					<li v-if="user"  class="nav-item">
-						<p> Bienvenu {{ user.firstname }}</p>
-					</li>
-				</ul>
-			</div>
-		</nav>
-      <router-view></router-view>
-      <Footer />
-    </div>
+
+  <v-app id="id">
+    <v-navigation-drawer
+		v-model="drawer"
+		app
+		v-if="loggedIn"
+    >
+		<!--  -->
+		<Sidebar />
+    </v-navigation-drawer>
+
+    <v-app-bar app >
+		<v-app-bar-nav-icon 
+		@click="drawer = !drawer">
+		</v-app-bar-nav-icon>
+
+		<MenuBar />
+    </v-app-bar>
+
+    <v-main>
+		<!--  -->
+		<router-view></router-view>
+    </v-main>
+	<Footer />
+  </v-app>
 </template>
 
 <script>
+
 import Footer from './components/Footer';
+import Sidebar from './components/Sidebar'
+import MenuBar from './components/MenuBar'
 
 export default {
 	name: 'App',
-	components: { Footer},
-	computed: {
-		user() {
-			return this.$store.state.user
+	components: { Sidebar, MenuBar, Footer},
+
+    data() {  
+		return {
+			drawer: null,
+		}
+	},
+
+	methods: {
+		loggedIn() {
+			return this.$store.state.status.loggedIn
 		}
 	}
 }
@@ -42,39 +53,16 @@ export default {
 
 <style lang="scss">
 
-@import '@/assets/sass/variables.scss';
+#app {
+	font-family: Avenir, Helvetica, Arial, sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	text-align: center;
+	color: #2c3e50;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
 
-	#app {
-		font-family: Avenir, Helvetica, Arial, sans-serif;
-		-webkit-font-smoothing: antialiased;
-		-moz-osx-font-smoothing: grayscale;
-		text-align: center;
-		color: #2c3e50;
-	}
-   .navbar {
-        background: $main-color;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-evenly;
-        align-items: center;
-        position: fixed;
-        top: 0;
-        right: 0;
-        width: 100%;
-        z-index: 1;
-
-		.logo{
-			height: 60px;
-			margin-left: 10px;
-			cursor: pointer;
-		}
-
-		.router-link-exact-active{
-			color: #ffffff;
-			border-bottom: 1px solid #ffffff;
-		}
-
-    }
-
-
+  }
+   
 </style>

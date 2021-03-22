@@ -1,6 +1,5 @@
 <template>
     <div class="events"> 
-        <Sidebar />
         <div class="row">
             <div class="col-md-6 mt-5 mx-auto">
                 <h1>Evenements</h1>
@@ -12,10 +11,8 @@
 
 
 <script>
-import Sidebar from '../components/Sidebar'
 export default {
     name: "Events",
-    components: { Sidebar}
 }
 </script>
 

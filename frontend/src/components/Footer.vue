@@ -1,7 +1,13 @@
+
 <template>
-    <div id="footer">
-        <p>{{ copyright }} - By Gladston Aristoverne</p>
-    </div>
+  <v-footer padless>
+    <v-col
+      class="text-center"
+      cols="12"
+    >
+      {{ copyright }} — <strong>Gladston Aristoverne</strong>
+    </v-col>
+  </v-footer>
 </template>
 
 <script>
@@ -23,14 +29,10 @@ export default {
 </script>   
 
 <style lang="scss">
-       #footer {
-            margin-top: 50px;
-            width: 100%;
-            color: gray;
-            text-align: center;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: -10;
-    }
+  #footer {
+    width: 100%;
+    color: gray;
+    text-align: center;
+    z-index: -10;
+}
 </style>
