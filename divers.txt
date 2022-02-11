@@ -1,4 +1,4 @@
-  <!--  <span class="btn btn-file">
+    <!--  <span class="btn btn-file">
                             <i class="fas fa-cloud-upload-alt"></i>
                                 <input 
                                 @change="selectFile()"

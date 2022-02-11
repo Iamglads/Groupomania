@@ -7,6 +7,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import VeeValidate from 'vee-validate'
 
 
+<<<<<<< HEAD
 
 
 
@@ -15,13 +16,14 @@ import 'vue-material/dist/vue-material.min.css'
 import 'vue-material/dist/theme/default.css'
 import vuetify from './plugins/vuetify';
 
+=======
+>>>>>>> parent of ca0925e... import de vue-material
 require ('./assets/style.css')
 
 
 Vue.config.productionTip = false
 
 Vue.use(VeeValidate)
-Vue.use(VueMaterial)
 
 
 new Vue({
