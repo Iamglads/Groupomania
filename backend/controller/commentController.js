@@ -7,7 +7,7 @@ exports.createCommentPost = (req, res, next) => {
     const userId = decodedToken.userId;
 
 
-    //console.log(req.body.id)
+    console.log(req.body.id)
    
     models.Comment.create({
         

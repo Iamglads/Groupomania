@@ -4,7 +4,7 @@ const router = express.Router()
 
 const auth = require('../middlewares/auth')
 const verifyEmailExist = require('../middlewares/verifyEmail')
-const multer = require('../middlewares/multer')
+const multerPicture = require('../middlewares/multerPicture')
 
 
 // controller users
@@ -22,7 +22,7 @@ router.delete('/user/unique/:id', auth, userController.deleteUser)
 // add user picture 
 
 
-router.post('/user/picture', auth, multer, userController.addPicture)
+router.post('/user/picture', auth, multerPicture, userController.addPicture)
 
 
 

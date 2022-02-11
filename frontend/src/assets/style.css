@@ -2,6 +2,11 @@ body{
     height: 100%;
     margin: 0;
     padding: 0;
+<<<<<<< HEAD
+=======
+    background: rgb(216, 216, 216);
+    
+>>>>>>> parent of 0aebc1e...  commit before adding vuetify
 }
 
 h1{
@@ -19,6 +24,7 @@ li{
     list-style-type: none;
     text-decoration: none;
     text-transform: none;
+    color: white;
 }
 
 .divider{
